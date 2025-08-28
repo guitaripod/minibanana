@@ -12,12 +12,6 @@ A React TypeScript web application for generating and editing images using Googl
 - **Responsive Design**: Works seamlessly on desktop and mobile devices
 - **Production Ready**: Built with TypeScript, proper error handling, and modern React practices
 
-## Recent Updates
-
-- **v1.1.1**: Fixed image generation API response parsing bug
-- **v1.1.0**: Enhanced API key management with modal interface
-- **v1.0.0**: Initial release with text-to-image and image editing features
-
 ## Tech Stack
 
 - React 19
@@ -101,9 +95,10 @@ The app uses the Gemini 2.5 Flash Image Preview API:
 
 ## Security Notes
 
-- API key is stored in environment variables
-- Images are processed client-side
-- No user data is stored on the server
+- API key can be stored in environment variables or browser localStorage
+- Images are processed client-side only
+- No user data is transmitted to or stored on external servers
+- All image generation happens through direct API calls from the browser
 
 ## License
 
