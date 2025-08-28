@@ -1,6 +1,8 @@
 # Gemini Image Generator
 
-A React TypeScript web application for generating and editing images using Google's Gemini 2.5 Flash model.
+[![Version](https://img.shields.io/badge/version-1.1.1-blue.svg)](https://github.com/guitaripod/minibanana/releases/tag/v1.1.1)
+
+A React TypeScript web application for generating and editing images using Google's Gemini 2.5 Flash Image Preview model.
 
 ## Features
 
@@ -10,29 +12,40 @@ A React TypeScript web application for generating and editing images using Googl
 - **Responsive Design**: Works seamlessly on desktop and mobile devices
 - **Production Ready**: Built with TypeScript, proper error handling, and modern React practices
 
+## Recent Updates
+
+- **v1.1.1**: Fixed image generation API response parsing bug
+- **v1.1.0**: Enhanced API key management with modal interface
+- **v1.0.0**: Initial release with text-to-image and image editing features
+
 ## Tech Stack
 
-- React 18
+- React 19
 - TypeScript
 - Vite
-- Gemini 2.5 Flash API
+- Gemini 2.5 Flash Image Preview API
 
 ## Setup
 
 1. Clone the repository
 2. Install dependencies:
-   ```bash
-   npm install
-   ```
-3. Create a `.env` file with your Gemini API key:
-   ```
-   VITE_GEMINI_API_KEY=your_api_key_here
-   ```
-4. Start the development server:
-   ```bash
-   npm run dev
-   ```
-5. Open http://localhost:5173 in your browser
+    ```bash
+    npm install
+    ```
+3. **Option 1: Environment Variable**
+   Create a `.env` file with your Gemini API key:
+    ```
+    VITE_GEMINI_API_KEY=your_api_key_here
+    ```
+
+4. **Option 2: Runtime Configuration**
+   Start the app and use the API key modal to enter your key at runtime
+
+5. Start the development server:
+    ```bash
+    npm run dev
+    ```
+6. Open http://localhost:5173 in your browser
 
 ## Development
 
