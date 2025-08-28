@@ -1,7 +1,5 @@
 # Gemini Image Generator
 
-[![Version](https://img.shields.io/badge/version-1.1.1-blue.svg)](https://github.com/guitaripod/minibanana/releases/tag/v1.1.1)
-
 A React TypeScript web application for generating and editing images using Google's Gemini 2.5 Flash Image Preview model.
 
 ## Features
