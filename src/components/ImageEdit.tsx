@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { generateImageFromTextAndImage } from '../services/geminiApi';
+import { generateImageFromTextAndImage, hasApiKey } from '../services/geminiApi';
 
 export const ImageEdit = () => {
   const [prompt, setPrompt] = useState('');
@@ -32,6 +32,18 @@ export const ImageEdit = () => {
       setLoading(false);
     }
   };
+
+  if (!hasApiKey()) {
+    return (
+      <div className="section">
+        <h2>Image Editing</h2>
+        <div className="api-key-required">
+          <p>Please set up your Gemini API key to use this feature.</p>
+          <p>Get your free API key from <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer">Google AI Studio</a></p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="section">

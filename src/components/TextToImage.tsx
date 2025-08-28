@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { generateImageFromText } from '../services/geminiApi';
+import { generateImageFromText, hasApiKey } from '../services/geminiApi';
 
 export const TextToImage = () => {
   const [prompt, setPrompt] = useState('');
@@ -23,6 +23,18 @@ export const TextToImage = () => {
       setLoading(false);
     }
   };
+
+  if (!hasApiKey()) {
+    return (
+      <div className="section">
+        <h2>Text to Image</h2>
+        <div className="api-key-required">
+          <p>Please set up your Gemini API key to use this feature.</p>
+          <p>Get your free API key from <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer">Google AI Studio</a></p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="section">

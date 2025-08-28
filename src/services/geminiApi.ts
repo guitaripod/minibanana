@@ -1,5 +1,35 @@
-const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 const BASE_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image-preview:generateContent';
+
+const getApiKey = (): string => {
+  const envKey = import.meta.env.VITE_GEMINI_API_KEY;
+  const storedKey = localStorage.getItem('gemini_api_key');
+
+  if (envKey && envKey.trim()) {
+    return envKey.trim();
+  }
+
+  if (storedKey && storedKey.trim()) {
+    return storedKey.trim();
+  }
+
+  throw new Error('API_KEY_MISSING');
+};
+
+export const setApiKey = (key: string): void => {
+  if (!key || !key.trim()) {
+    throw new Error('Invalid API key provided');
+  }
+  localStorage.setItem('gemini_api_key', key.trim());
+};
+
+export const hasApiKey = (): boolean => {
+  try {
+    getApiKey();
+    return true;
+  } catch {
+    return false;
+  }
+};
 
 interface GenerateImageRequest {
   contents: {
@@ -14,11 +44,13 @@ export const generateImageFromText = async (prompt: string): Promise<string> => 
     }]
   };
 
+  const apiKey = getApiKey();
+
   const response = await fetch(BASE_URL, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'x-goog-api-key': API_KEY,
+      'x-goog-api-key': apiKey,
     },
     body: JSON.stringify(request),
   });
@@ -75,11 +107,13 @@ export const generateImageFromTextAndImage = async (
     }]
   };
 
+  const apiKey = getApiKey();
+
   const response = await fetch(BASE_URL, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'x-goog-api-key': API_KEY,
+      'x-goog-api-key': apiKey,
     },
     body: JSON.stringify(request),
   });

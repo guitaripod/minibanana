@@ -1,10 +1,13 @@
 import { useState, useEffect } from 'react';
 import { TextToImage } from './components/TextToImage';
 import { ImageEdit } from './components/ImageEdit';
+import { ApiKeyModal } from './components/ApiKeyModal';
+import { hasApiKey } from './services/geminiApi';
 import './App.css';
 
 function App() {
   const [activeTab, setActiveTab] = useState<'text' | 'edit'>('text');
+  const [showApiKeyModal, setShowApiKeyModal] = useState(false);
 
   useEffect(() => {
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
@@ -21,6 +24,12 @@ function App() {
     return () => {
       mediaQuery.removeEventListener('change', updateTheme);
     };
+  }, []);
+
+  useEffect(() => {
+    if (!hasApiKey()) {
+      setShowApiKeyModal(true);
+    }
   }, []);
 
   return (
@@ -48,6 +57,10 @@ function App() {
       <main>
         {activeTab === 'text' ? <TextToImage /> : <ImageEdit />}
       </main>
+
+      {showApiKeyModal && (
+        <ApiKeyModal onClose={() => setShowApiKeyModal(false)} />
+      )}
     </div>
   );
 }
