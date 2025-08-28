@@ -9,6 +9,7 @@ const getApiKey = (): string => {
 
   const envKey = import.meta.env.VITE_GEMINI_API_KEY;
   if (envKey && envKey.trim()) {
+    console.warn('Using environment API key - this should only happen in development!');
     return envKey.trim();
   }
 
