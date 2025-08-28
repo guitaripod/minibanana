@@ -35,52 +35,61 @@ function App() {
 
   return (
     <div className="app">
-      <header>
-        <div style={{ position: 'relative' }}>
+      <header className="header">
+        <div className="header-content">
+          <div className="header-icon">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+            </svg>
+          </div>
           <h1>Gemini Image Generator</h1>
-          <p>Generate and edit images using Gemini 2.5 Flash</p>
-          {isDevelopment && (
+          <p className="header-subtitle">Create and transform images with AI</p>
+        </div>
+        {isDevelopment && (
+          <div className="header-actions">
             <button
+              className="reset-button"
               onClick={() => {
                 clearApiKey();
                 window.location.reload();
               }}
-              style={{
-                position: 'absolute',
-                top: '10px',
-                right: '10px',
-                fontSize: '12px',
-                padding: '4px 8px',
-                background: '#666',
-                color: 'white',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: 'pointer'
-              }}
               title="Clear API key (dev only)"
+              aria-label="Reset API key"
             >
-              🔄 Reset
+              🔄
             </button>
-          )}
-        </div>
+          </div>
+        )}
       </header>
 
-      <nav>
-        <button
-          className={activeTab === 'text' ? 'active' : ''}
-          onClick={() => setActiveTab('text')}
-        >
-          Text to Image
-        </button>
-        <button
-          className={activeTab === 'edit' ? 'active' : ''}
-          onClick={() => setActiveTab('edit')}
-        >
-          Image Editing
-        </button>
-      </nav>
+      <div className="nav-container">
+        <nav className="nav-tabs" role="tablist">
+          <button
+            className={`nav-tab ${activeTab === 'text' ? 'active' : ''}`}
+            onClick={() => setActiveTab('text')}
+            role="tab"
+            aria-selected={activeTab === 'text'}
+          >
+            <svg className="nav-icon" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-1 9h-3c-.55 0-1-.45-1-1s.45-1 1-1h3c.55 0 1 .45 1 1s-.45 1-1 1zm0-3h-3c-.55 0-1-.45-1-1s.45-1 1-1h3c.55 0 1 .45 1 1s-.45 1-1 1z"/>
+            </svg>
+            Text to Image
+          </button>
+          <button
+            className={`nav-tab ${activeTab === 'edit' ? 'active' : ''}`}
+            onClick={() => setActiveTab('edit')}
+            role="tab"
+            aria-selected={activeTab === 'edit'}
+          >
+            <svg className="nav-icon" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+            </svg>
+            Image Editing
+          </button>
+        </nav>
+      </div>
 
-      <main>
+      <main className="main-content">
         {activeTab === 'text' ? <TextToImage /> : <ImageEdit />}
       </main>
 
