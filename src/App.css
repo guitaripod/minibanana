@@ -1,44 +1,44 @@
 :root {
-  /* Subtle Banana Cyberpunk Theme - Light Mode Friendly */
-  --primary-gradient: linear-gradient(135deg, #2d2d2d 0%, #4a4a4a 50%, #d4af37 100%);
-  --secondary-gradient: linear-gradient(135deg, #f5f5f5 0%, #d4af37 100%);
-  --accent-gradient: linear-gradient(135deg, #d4af37 0%, #c4a032 50%, #8b7355 100%);
-  --success-gradient: linear-gradient(135deg, #d4af37 0%, #b8860b 100%);
+  /* Clean Banana Theme Gradients - Light Mode */
+  --primary-gradient: linear-gradient(135deg, #3c4043 0%, #5f6368 50%, #b8860b 100%);
+  --secondary-gradient: linear-gradient(135deg, #f1f3f4 0%, #b8860b 100%);
+  --accent-gradient: linear-gradient(135deg, #b8860b 0%, #daa520 50%, #8b7355 100%);
+  --success-gradient: linear-gradient(135deg, #b8860b 0%, #daa520 100%);
 
-  /* Light theme colors - Subtle Banana Cyberpunk (Highly Readable) */
+  /* Light theme colors - Readable Banana Theme */
   --bg-primary: #ffffff;
-  --bg-secondary: #fafafa;
-  --bg-tertiary: #f5f5f5;
+  --bg-secondary: #f8f9fa;
+  --bg-tertiary: #f1f3f4;
   --bg-card: rgba(255, 255, 255, 0.98);
   --bg-overlay: rgba(255, 255, 255, 0.95);
 
-  --text-primary: #1a1a1a;
-  --text-secondary: #8b7355;
-  --text-muted: #a0896b;
-  --text-accent: #d4af37;
+  --text-primary: #202124;
+  --text-secondary: #5f6368;
+  --text-muted: #80868b;
+  --text-accent: #b8860b;
 
-  --border-light: #e5e5e5;
-  --border-medium: #d4d4d4;
-  --border-focus: #d4af37;
+  --border-light: #e8eaed;
+  --border-medium: #dadce0;
+  --border-focus: #b8860b;
 
   --shadow-sm: 0 1px 2px 0 rgba(255, 255, 0, 0.1);
   --shadow-md: 0 4px 6px -1px rgba(255, 255, 0, 0.15), 0 2px 4px -1px rgba(255, 255, 0, 0.1);
   --shadow-lg: 0 10px 15px -3px rgba(255, 255, 0, 0.2), 0 4px 6px -2px rgba(255, 255, 0, 0.15);
   --shadow-xl: 0 20px 25px -5px rgba(255, 255, 0, 0.25), 0 10px 10px -5px rgba(255, 255, 0, 0.2);
 
-  /* Status colors - Subtle Banana Theme (Light Mode) */
+  /* Status colors - Standard with Banana Accents (Light Mode) */
   --error-light: rgba(239, 68, 68, 0.08);
   --error-main: #dc2626;
   --error-dark: #b91c1c;
-  --warning-light: rgba(245, 158, 11, 0.08);
-  --warning-main: #d97706;
+  --warning-light: rgba(184, 134, 11, 0.08);
+  --warning-main: #b8860b;
   --success-light: rgba(34, 197, 94, 0.08);
   --success-main: #16a34a;
 
-  /* Glass morphism - Subtle style (Light Mode) */
-  --glass-bg: rgba(255, 255, 255, 0.9);
-  --glass-border: rgba(212, 175, 55, 0.2);
-  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.08);
+  /* Glass morphism - Clean style (Light Mode) */
+  --glass-bg: rgba(255, 255, 255, 0.95);
+  --glass-border: rgba(184, 134, 11, 0.15);
+  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.06);
 }
 
 [data-theme="dark"] {
@@ -101,7 +101,7 @@ body {
   align-items: stretch;
 }
 
-/* Subtle Banana Background Pattern */
+/* Clean Background Pattern */
 .app::before {
   content: '';
   position: absolute;
@@ -110,12 +110,10 @@ body {
   right: 0;
   bottom: 0;
   background:
-    radial-gradient(circle at 20% 80%, rgba(212, 175, 55, 0.02) 0%, transparent 50%),
-    radial-gradient(circle at 80% 20%, rgba(139, 115, 85, 0.015) 0%, transparent 50%),
-    radial-gradient(circle at 40% 40%, rgba(212, 175, 55, 0.01) 0%, transparent 50%);
+    radial-gradient(circle at 20% 80%, rgba(184, 134, 11, 0.01) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(184, 134, 11, 0.005) 0%, transparent 50%);
   pointer-events: none;
   z-index: -1;
-  animation: subtle-pulse 20s ease-in-out infinite;
 }
 
 @keyframes subtle-pulse {
@@ -1206,18 +1204,18 @@ body {
   }
 }
 
-/* Subtle Banana Theme Effects (Function over Form) */
+/* Clean Theme Effects (Function over Form) */
 .btn-primary {
-  border: 1px solid rgba(212, 175, 55, 0.2) !important;
+  border: 1px solid rgba(184, 134, 11, 0.2) !important;
   transition: all 0.3s ease;
 }
 
 .btn-primary:hover:not(:disabled) {
-  border-color: rgba(139, 115, 85, 0.3) !important;
+  border-color: rgba(184, 134, 11, 0.3) !important;
   transform: translateY(-1px);
 }
 
-/* Subtle text emphasis */
+/* Clean text emphasis */
 .section-title,
 .header h1 {
   font-weight: 700;
@@ -1236,13 +1234,13 @@ body {
   border-color: var(--border-focus) !important;
 }
 
-/* Dark theme subtle enhancements */
+/* Dark theme enhancements */
 [data-theme="dark"] .btn-primary {
   border: 1px solid rgba(244, 232, 124, 0.3) !important;
 }
 
 [data-theme="dark"] .btn-primary:hover:not(:disabled) {
-  border-color: rgba(230, 215, 163, 0.4) !important;
+  border-color: rgba(244, 232, 124, 0.4) !important;
 }
 
 [data-theme="dark"] .section-title,
