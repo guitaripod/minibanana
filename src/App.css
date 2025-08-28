@@ -1,72 +1,78 @@
 :root {
-  /* Modern color palette with gradients */
-  --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-  --accent-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-  --success-gradient: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+  /* Cyberpunk Banana Theme - Black & Yellow (Light Mode Friendly) */
+  --primary-gradient: linear-gradient(135deg, #1a1a1a 0%, #333333 50%, #ffd700 100%);
+  --secondary-gradient: linear-gradient(135deg, #f9f9f9 0%, #ffd700 100%);
+  --accent-gradient: linear-gradient(135deg, #ffd700 0%, #ffed4e 50%, #b8860b 100%);
+  --success-gradient: linear-gradient(135deg, #ffd700 0%, #daa520 100%);
 
-  /* Light theme colors */
+  /* Light theme colors - Cyberpunk Banana (Readable) */
   --bg-primary: #ffffff;
-  --bg-secondary: #f8fafc;
-  --bg-tertiary: #f1f5f9;
+  --bg-secondary: #fefefe;
+  --bg-tertiary: #f9f9f9;
   --bg-card: rgba(255, 255, 255, 0.95);
-  --bg-overlay: rgba(255, 255, 255, 0.8);
+  --bg-overlay: rgba(255, 255, 255, 0.9);
 
-  --text-primary: #1e293b;
-  --text-secondary: #64748b;
-  --text-muted: #94a3b8;
-  --text-accent: #7c3aed;
+  --text-primary: #1a1a1a;
+  --text-secondary: #b8860b;
+  --text-muted: #daa520;
+  --text-accent: #ffd700;
 
-  --border-light: #e2e8f0;
-  --border-medium: #cbd5e1;
-  --border-focus: #7c3aed;
+  --border-light: #e6e6e6;
+  --border-medium: #cccccc;
+  --border-focus: #ffd700;
 
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  --shadow-sm: 0 1px 2px 0 rgba(255, 255, 0, 0.1);
+  --shadow-md: 0 4px 6px -1px rgba(255, 255, 0, 0.15), 0 2px 4px -1px rgba(255, 255, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(255, 255, 0, 0.2), 0 4px 6px -2px rgba(255, 255, 0, 0.15);
+  --shadow-xl: 0 20px 25px -5px rgba(255, 255, 0, 0.25), 0 10px 10px -5px rgba(255, 255, 0, 0.2);
 
-  /* Status colors */
-  --error-light: #fef2f2;
-  --error-main: #ef4444;
-  --error-dark: #dc2626;
-  --warning-light: #fffbeb;
-  --warning-main: #f59e0b;
-  --success-light: #f0fdf4;
-  --success-main: #10b981;
+  /* Status colors - Cyberpunk Banana (Light Mode) */
+  --error-light: rgba(255, 100, 100, 0.1);
+  --error-main: #dc2626;
+  --error-dark: #b91c1c;
+  --warning-light: rgba(255, 215, 0, 0.1);
+  --warning-main: #d97706;
+  --success-light: rgba(255, 215, 0, 0.1);
+  --success-main: #65a30d;
 
-  /* Glass morphism */
-  --glass-bg: rgba(255, 255, 255, 0.25);
-  --glass-border: rgba(255, 255, 255, 0.18);
-  --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  /* Glass morphism - Cyberpunk style (Light Mode) */
+  --glass-bg: rgba(255, 255, 255, 0.8);
+  --glass-border: rgba(255, 215, 0, 0.3);
+  --glass-shadow: 0 8px 32px 0 rgba(255, 215, 0, 0.2);
 }
 
 [data-theme="dark"] {
-  /* Dark theme colors */
-  --bg-primary: #0f172a;
-  --bg-secondary: #1e293b;
-  --bg-tertiary: #334155;
-  --bg-card: rgba(30, 41, 59, 0.95);
-  --bg-overlay: rgba(15, 23, 42, 0.9);
+  /* Dark theme - Full Cyberpunk Banana Intensity */
+  --bg-primary: #000000;
+  --bg-secondary: #0a0a0a;
+  --bg-tertiary: #1a1a1a;
+  --bg-card: rgba(10, 10, 10, 0.95);
+  --bg-overlay: rgba(0, 0, 0, 0.95);
 
-  --text-primary: #f8fafc;
-  --text-secondary: #cbd5e1;
-  --text-muted: #94a3b8;
-  --text-accent: #a78bfa;
+  --text-primary: #ffffff;
+  --text-secondary: #ffff00;
+  --text-muted: #ffd700;
+  --text-accent: #ffff00;
 
-  --border-light: #334155;
-  --border-medium: #475569;
-  --border-focus: #a78bfa;
+  --border-light: #333333;
+  --border-medium: #555555;
+  --border-focus: #ffff00;
 
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.4);
-  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.6), 0 10px 10px -5px rgba(0, 0, 0, 0.5);
+  --shadow-sm: 0 1px 2px 0 rgba(255, 255, 0, 0.3);
+  --shadow-md: 0 4px 6px -1px rgba(255, 255, 0, 0.4), 0 2px 4px -1px rgba(255, 255, 0, 0.3);
+  --shadow-lg: 0 10px 15px -3px rgba(255, 255, 0, 0.5), 0 4px 6px -2px rgba(255, 255, 0, 0.4);
+  --shadow-xl: 0 20px 25px -5px rgba(255, 255, 0, 0.6), 0 10px 10px -5px rgba(255, 255, 0, 0.5);
 
-  /* Dark theme glass morphism */
-  --glass-bg: rgba(30, 41, 59, 0.25);
-  --glass-border: rgba(255, 255, 255, 0.1);
-  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.6);
+  /* Dark theme glass morphism - Full Cyberpunk */
+  --glass-bg: rgba(0, 0, 0, 0.5);
+  --glass-border: rgba(255, 255, 0, 0.4);
+  --glass-shadow: 0 8px 32px 0 rgba(255, 255, 0, 0.5);
+
+  /* Dark theme gradients - Full intensity */
+  --primary-gradient: linear-gradient(135deg, #000000 0%, #1a1a1a 30%, #ffff00 100%);
+  --secondary-gradient: linear-gradient(135deg, #0a0a0a 0%, #ffd700 100%);
+  --accent-gradient: linear-gradient(135deg, #ffff00 0%, #ffed4e 50%, #000000 100%);
+  --success-gradient: linear-gradient(135deg, #ffff00 0%, #ffd700 100%);
 }
 
 * {
@@ -95,7 +101,7 @@ body {
   align-items: stretch;
 }
 
-/* Background pattern */
+/* Cyberpunk Banana Background Pattern */
 .app::before {
   content: '';
   position: absolute;
@@ -104,11 +110,23 @@ body {
   right: 0;
   bottom: 0;
   background:
-    radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.1) 0%, transparent 50%),
-    radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.1) 0%, transparent 50%),
-    radial-gradient(circle at 40% 40%, rgba(120, 219, 226, 0.1) 0%, transparent 50%);
+    radial-gradient(circle at 20% 80%, rgba(255, 215, 0, 0.04) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(218, 165, 32, 0.03) 0%, transparent 50%),
+    radial-gradient(circle at 40% 40%, rgba(255, 215, 0, 0.02) 0%, transparent 50%);
   pointer-events: none;
   z-index: -1;
+  animation: cyberpunk-pulse 12s ease-in-out infinite;
+}
+
+@keyframes cyberpunk-pulse {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(1.02);
+  }
 }
 
 .header {
@@ -1185,5 +1203,74 @@ body {
     --border-light: #ffffff;
     --border-medium: #ffffff;
     --text-secondary: #ffffff;
+  }
+}
+
+/* Cyberpunk Banana Glow Effects (Light Mode Friendly) */
+.btn-primary {
+  border: 1px solid rgba(255, 215, 0, 0.3) !important;
+  box-shadow: var(--shadow-lg), 0 0 15px rgba(255, 215, 0, 0.2) !important;
+}
+
+.btn-primary:hover:not(:disabled) {
+  box-shadow: var(--shadow-xl), 0 0 20px rgba(255, 215, 0, 0.3) !important;
+  border-color: rgba(218, 165, 32, 0.4) !important;
+}
+
+/* Cyberpunk text glow (subtle for light mode) */
+.section-title,
+.header h1 {
+  text-shadow: 0 0 8px rgba(255, 215, 0, 0.3);
+}
+
+/* Neon border effects (subtle) */
+.content-section,
+.nav-tabs {
+  border: 1px solid rgba(255, 215, 0, 0.2) !important;
+  box-shadow: var(--shadow-xl), 0 0 10px rgba(255, 215, 0, 0.1) !important;
+}
+
+/* Banana-themed animations (gentle) */
+@keyframes banana-glow {
+  0%, 100% {
+    box-shadow: var(--shadow-lg), 0 0 15px rgba(255, 215, 0, 0.2);
+  }
+  50% {
+    box-shadow: var(--shadow-lg), 0 0 20px rgba(255, 215, 0, 0.3);
+  }
+}
+
+.btn-primary {
+  animation: banana-glow 4s ease-in-out infinite;
+}
+
+/* Dark theme cyberpunk enhancements */
+[data-theme="dark"] .btn-primary {
+  border: 1px solid rgba(255, 255, 0, 0.4) !important;
+  box-shadow: var(--shadow-lg), 0 0 25px rgba(255, 255, 0, 0.4) !important;
+}
+
+[data-theme="dark"] .btn-primary:hover:not(:disabled) {
+  box-shadow: var(--shadow-xl), 0 0 35px rgba(255, 255, 0, 0.6) !important;
+  border-color: rgba(255, 255, 0, 0.6) !important;
+}
+
+[data-theme="dark"] .section-title,
+[data-theme="dark"] .header h1 {
+  text-shadow: 0 0 15px rgba(255, 255, 0, 0.7);
+}
+
+[data-theme="dark"] .content-section,
+[data-theme="dark"] .nav-tabs {
+  border: 1px solid rgba(255, 255, 0, 0.3) !important;
+  box-shadow: var(--shadow-xl), 0 0 20px rgba(255, 255, 0, 0.2) !important;
+}
+
+[data-theme="dark"] @keyframes banana-glow {
+  0%, 100% {
+    box-shadow: var(--shadow-lg), 0 0 25px rgba(255, 255, 0, 0.4);
+  }
+  50% {
+    box-shadow: var(--shadow-lg), 0 0 35px rgba(255, 255, 0, 0.7);
   }
 }
