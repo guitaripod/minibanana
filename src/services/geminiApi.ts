@@ -71,7 +71,10 @@ export const generateImageFromText = async (prompt: string): Promise<string> => 
 
   let imageData = null;
 
-  if (data.candidates?.[0]?.content?.parts?.[1]?.inlineData?.data) {
+  if (data.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data) {
+    imageData = data.candidates[0].content.parts[0].inlineData.data;
+  }
+  else if (data.candidates?.[0]?.content?.parts?.[1]?.inlineData?.data) {
     imageData = data.candidates[0].content.parts[1].inlineData.data;
   }
   else if (data.candidates?.[0]?.content?.parts?.[0]?.inline_data?.data) {
@@ -134,7 +137,10 @@ export const generateImageFromTextAndImage = async (
 
   let imageData = null;
 
-  if (data.candidates?.[0]?.content?.parts?.[1]?.inlineData?.data) {
+  if (data.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data) {
+    imageData = data.candidates[0].content.parts[0].inlineData.data;
+  }
+  else if (data.candidates?.[0]?.content?.parts?.[1]?.inlineData?.data) {
     imageData = data.candidates[0].content.parts[1].inlineData.data;
   }
   else if (data.candidates?.[0]?.content?.parts?.[0]?.inline_data?.data) {
