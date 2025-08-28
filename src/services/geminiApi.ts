@@ -1,15 +1,15 @@
 const BASE_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image-preview:generateContent';
 
 const getApiKey = (): string => {
-  const envKey = import.meta.env.VITE_GEMINI_API_KEY;
   const storedKey = localStorage.getItem('gemini_api_key');
-
-  if (envKey && envKey.trim()) {
-    return envKey.trim();
-  }
 
   if (storedKey && storedKey.trim()) {
     return storedKey.trim();
+  }
+
+  const envKey = import.meta.env.VITE_GEMINI_API_KEY;
+  if (envKey && envKey.trim()) {
+    return envKey.trim();
   }
 
   throw new Error('API_KEY_MISSING');
@@ -29,6 +29,10 @@ export const hasApiKey = (): boolean => {
   } catch {
     return false;
   }
+};
+
+export const clearApiKey = (): void => {
+  localStorage.removeItem('gemini_api_key');
 };
 
 interface GenerateImageRequest {
