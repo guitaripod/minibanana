@@ -7,6 +7,7 @@ export const ImageEdit = () => {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [hasEdited, setHasEdited] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -14,6 +15,7 @@ export const ImageEdit = () => {
     if (file) {
       setImageFile(file);
       setImageUrl(URL.createObjectURL(file));
+      setHasEdited(false);
     }
   };
 
@@ -26,6 +28,7 @@ export const ImageEdit = () => {
     try {
       const url = await generateImageFromTextAndImage(prompt, imageFile);
       setImageUrl(url);
+      setHasEdited(true);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to edit image');
     } finally {
@@ -39,6 +42,7 @@ export const ImageEdit = () => {
     setImageUrl(null);
     setError(null);
     setLoading(false);
+    setHasEdited(false);
   };
 
   if (!hasApiKey()) {
@@ -125,6 +129,7 @@ export const ImageEdit = () => {
                     setImageFile(null);
                     setImageUrl(null);
                     setPrompt('');
+                    setHasEdited(false);
                   }}
                   style={{
                     position: 'absolute',
@@ -173,7 +178,7 @@ export const ImageEdit = () => {
               )}
               {loading ? 'Transforming...' : 'Edit Image'}
             </button>
-            {imageUrl && imageUrl !== (imageFile ? URL.createObjectURL(imageFile) : '') && (
+      {hasEdited && imageUrl && (
               <button
                 className="btn-secondary"
                 onClick={handleNewTask}
