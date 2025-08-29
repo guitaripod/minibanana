@@ -72,7 +72,7 @@ export const ImageEdit = () => {
         <div className="input-group">
           <div className="form-field">
             <label htmlFor="image-upload">Upload Image</label>
-            {!imageUrl || imageUrl === (imageFile ? URL.createObjectURL(imageFile) : '') ? (
+            {!imageFile || (imageUrl && imageFile && imageUrl === URL.createObjectURL(imageFile)) ? (
               <div
                 className="file-input-container"
                 onClick={() => fileInputRef.current?.click()}
@@ -114,7 +114,7 @@ export const ImageEdit = () => {
             ) : (
               <div className="image-result">
                 <img
-                  src={imageUrl}
+                  src={imageUrl!}
                   alt="Uploaded image"
                   className="result-image"
                   style={{ maxHeight: '300px' }}
@@ -218,7 +218,19 @@ export const ImageEdit = () => {
                 document.body.removeChild(link);
               }}
             />
-            <div className="image-overlay">
+            <div
+              className="image-overlay"
+              onClick={() => {
+                const link = document.createElement('a');
+                link.href = imageUrl;
+                link.target = '_blank';
+                link.rel = 'noopener noreferrer';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+              }}
+              style={{ cursor: 'pointer' }}
+            >
               <span>Click to view full size</span>
             </div>
           </div>
