@@ -1,0 +1,250 @@
+import { useState, useRef } from 'react';
+import { generateImageFromTextAndMultipleImages, hasApiKey } from '../services/geminiApi';
+
+export const MultiImageComposition = () => {
+  const [prompt, setPrompt] = useState('');
+  const [imageFiles, setImageFiles] = useState<(File | null)[]>([null, null, null]);
+  const [imageUrls, setImageUrls] = useState<(string | null)[]>([null, null, null]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const fileInputRefs = useRef<(HTMLInputElement | null)[]>([null, null, null]);
+
+  const handleFileChange = (index: number) => (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const newFiles = [...imageFiles];
+      const newUrls = [...imageUrls];
+      newFiles[index] = file;
+      newUrls[index] = URL.createObjectURL(file);
+      setImageFiles(newFiles);
+      setImageUrls(newUrls);
+    }
+  };
+
+  const handleRemoveImage = (index: number) => {
+    const newFiles = [...imageFiles];
+    const newUrls = [...imageUrls];
+    if (newUrls[index]) {
+      URL.revokeObjectURL(newUrls[index]!);
+    }
+    newFiles[index] = null;
+    newUrls[index] = null;
+    setImageFiles(newFiles);
+    setImageUrls(newUrls);
+  };
+
+
+
+  const handleGenerate = async () => {
+    const validFiles = imageFiles.filter(file => file !== null) as File[];
+    if (!prompt.trim() || validFiles.length < 2) return;
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      const url = await generateImageFromTextAndMultipleImages(prompt, validFiles);
+      setImageUrls(prev => {
+        const newUrls = [...prev];
+        newUrls[3] = url;
+        return newUrls;
+      });
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to compose images');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const validFilesCount = imageFiles.filter(file => file !== null).length;
+
+  if (!hasApiKey()) {
+    return (
+      <div className="content-section">
+        <div className="section-header">
+          <h2 className="section-title">Multi-Image Composition</h2>
+          <p className="section-description">Combine multiple images into one composition</p>
+        </div>
+        <div className="status-message status-error">
+          <svg className="status-icon" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+          </svg>
+          <div>
+            <strong>API Key Required</strong>
+            <p>Please set up your Gemini API key to use this feature. Get your free API key from <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" className="guide-link">Google AI Studio</a></p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="content-section">
+      <div className="section-header">
+        <h2 className="section-title">Multi-Image Composition</h2>
+        <p className="section-description">Upload 2-3 images and describe how to combine them</p>
+      </div>
+
+      <div className="input-section">
+        <div className="input-group">
+          <div className="form-field">
+            <label>Upload Images (2-3 required)</label>
+            <div className="multi-image-grid">
+              {[0, 1, 2].map((index) => (
+                <div key={index} className="image-upload-slot">
+                  {!imageUrls[index] ? (
+                    <div
+                      className="file-input-container"
+                      onClick={() => fileInputRefs.current[index]?.click()}
+                      onDragOver={(e) => {
+                        e.preventDefault();
+                        e.currentTarget.classList.add('drag-over');
+                      }}
+                      onDragLeave={(e) => {
+                        e.preventDefault();
+                        e.currentTarget.classList.remove('drag-over');
+                      }}
+                      onDrop={(e) => {
+                        e.preventDefault();
+                        e.currentTarget.classList.remove('drag-over');
+                        const file = e.dataTransfer.files[0];
+                        if (file && file.type.startsWith('image/')) {
+                          const mockEvent = {
+                            target: { files: [file] }
+                          } as unknown as React.ChangeEvent<HTMLInputElement>;
+                          handleFileChange(index)(mockEvent);
+                        }
+                      }}
+                    >
+                      <svg className="file-input-icon" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
+                      </svg>
+                      <div className="file-input-text">Image {index + 1}</div>
+                      <div className="file-input-subtext">Drop or click</div>
+                      <input
+                        type="file"
+                        ref={(el) => { fileInputRefs.current[index] = el; }}
+                        onChange={handleFileChange(index)}
+                        accept="image/*"
+                        disabled={loading}
+                        className="file-input-hidden"
+                      />
+                    </div>
+                  ) : (
+                    <div className="image-result">
+                      <img
+                        src={imageUrls[index]!}
+                        alt={`Uploaded image ${index + 1}`}
+                        className="result-image"
+                        style={{ maxHeight: '200px' }}
+                      />
+                      <button
+                        className="result-btn"
+                        onClick={() => handleRemoveImage(index)}
+                        style={{
+                          position: 'absolute',
+                          top: '0.5rem',
+                          right: '0.5rem',
+                          background: 'rgba(0,0,0,0.7)',
+                          padding: '0.25rem',
+                          width: 'auto',
+                          minWidth: 'auto'
+                        }}
+                      >
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z"/>
+                        </svg>
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="form-field">
+            <label htmlFor="composition-prompt">Composition Instructions</label>
+            <textarea
+              id="composition-prompt"
+              value={prompt}
+              onChange={(e) => setPrompt(e.target.value)}
+              placeholder="Combine the elements from these images into a new scene, place the product on the model, create a collage..."
+              rows={4}
+              disabled={loading || validFilesCount < 2}
+              aria-describedby="composition-help"
+            />
+            <small id="composition-help" style={{ color: 'var(--text-muted)', fontSize: '0.875rem', marginTop: '0.25rem', display: 'block' }}>
+              Describe how to combine the uploaded images
+            </small>
+          </div>
+
+          <div className="action-buttons">
+            <button
+              className={`btn-primary ${loading ? 'btn-loading' : ''}`}
+              onClick={handleGenerate}
+              disabled={loading || !prompt.trim() || validFilesCount < 2}
+            >
+              {!loading && (
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+                </svg>
+              )}
+              {loading ? 'Composing...' : 'Compose Images'}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {error && (
+        <div className="status-message status-error">
+          <svg className="status-icon" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+          </svg>
+          <div>
+            <strong>Composition Failed</strong>
+            <p>{error}</p>
+          </div>
+        </div>
+      )}
+
+      {imageUrls[3] && (
+        <div className="result-section">
+          <div className="image-result">
+            <img
+              src={imageUrls[3]!}
+              alt="Composed image"
+              className="result-image"
+              onClick={() => window.open(imageUrls[3]!, '_blank')}
+            />
+            <div className="image-overlay">
+              <span>Click to view full size</span>
+            </div>
+          </div>
+
+          <div className="result-actions">
+            <a
+              href={imageUrls[3]!}
+              download="composed-image.png"
+              className="result-btn"
+            >
+              <svg className="btn-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+              </svg>
+              Download Image
+            </a>
+            <button
+              className="result-btn"
+              onClick={() => navigator.clipboard.writeText(imageUrls[3]!)}
+              style={{ background: 'var(--secondary-gradient)' }}
+            >
+              <svg className="btn-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
+              </svg>
+              Copy URL
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
