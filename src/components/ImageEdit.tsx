@@ -33,6 +33,14 @@ export const ImageEdit = () => {
     }
   };
 
+  const handleNewTask = () => {
+    setPrompt('');
+    setImageFile(null);
+    setImageUrl(null);
+    setError(null);
+    setLoading(false);
+  };
+
   if (!hasApiKey()) {
     return (
       <div className="content-section">
@@ -64,7 +72,7 @@ export const ImageEdit = () => {
         <div className="input-group">
           <div className="form-field">
             <label htmlFor="image-upload">Upload Image</label>
-            {!imageUrl ? (
+            {!imageUrl || imageUrl === (imageFile ? URL.createObjectURL(imageFile) : '') ? (
               <div
                 className="file-input-container"
                 onClick={() => fileInputRef.current?.click()}
@@ -144,7 +152,7 @@ export const ImageEdit = () => {
               onChange={(e) => setPrompt(e.target.value)}
               placeholder="Add a sunset background, make it look like a painting, change the colors to blue and gold..."
               rows={4}
-              disabled={loading || !imageFile}
+              disabled={loading}
               aria-describedby="edit-help"
             />
             <small id="edit-help" style={{ color: 'var(--text-muted)', fontSize: '0.875rem', marginTop: '0.25rem', display: 'block' }}>
@@ -165,6 +173,18 @@ export const ImageEdit = () => {
               )}
               {loading ? 'Transforming...' : 'Edit Image'}
             </button>
+            {imageUrl && imageUrl !== (imageFile ? URL.createObjectURL(imageFile) : '') && (
+              <button
+                className="btn-secondary"
+                onClick={handleNewTask}
+                disabled={loading}
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/>
+                </svg>
+                New Task
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -188,7 +208,15 @@ export const ImageEdit = () => {
               src={imageUrl}
               alt="Edited image"
               className="result-image"
-              onClick={() => window.open(imageUrl, '_blank')}
+              onClick={() => {
+                const link = document.createElement('a');
+                link.href = imageUrl;
+                link.target = '_blank';
+                link.rel = 'noopener noreferrer';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+              }}
             />
             <div className="image-overlay">
               <span>Click to view full size</span>
