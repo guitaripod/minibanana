@@ -506,6 +506,18 @@ body {
   cursor: pointer;
 }
 
+.multi-image-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.image-upload-slot {
+  position: relative;
+  min-height: 200px;
+}
+
 /* Action buttons */
 .action-buttons {
   display: flex;
