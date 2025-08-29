@@ -24,6 +24,13 @@ export const TextToImage = () => {
     }
   };
 
+  const handleNewTask = () => {
+    setPrompt('');
+    setImageUrl(null);
+    setError(null);
+    setLoading(false);
+  };
+
   if (!hasApiKey()) {
     return (
       <div className="content-section">
@@ -83,6 +90,18 @@ export const TextToImage = () => {
               )}
               {loading ? 'Creating magic...' : 'Generate Image'}
             </button>
+            {imageUrl && (
+              <button
+                className="btn-secondary"
+                onClick={handleNewTask}
+                disabled={loading}
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/>
+                </svg>
+                New Task
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -106,9 +125,29 @@ export const TextToImage = () => {
               src={imageUrl}
               alt="Generated image"
               className="result-image"
-              onClick={() => window.open(imageUrl, '_blank')}
+              onClick={() => {
+                const link = document.createElement('a');
+                link.href = imageUrl;
+                link.target = '_blank';
+                link.rel = 'noopener noreferrer';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+              }}
             />
-            <div className="image-overlay">
+            <div
+              className="image-overlay"
+              onClick={() => {
+                const link = document.createElement('a');
+                link.href = imageUrl;
+                link.target = '_blank';
+                link.rel = 'noopener noreferrer';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+              }}
+              style={{ cursor: 'pointer' }}
+            >
               <span>Click to view full size</span>
             </div>
           </div>
