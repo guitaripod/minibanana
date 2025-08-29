@@ -206,64 +206,64 @@ export const ImageEdit = () => {
         </div>
       )}
 
-      {imageUrl && imageUrl !== (imageFile ? URL.createObjectURL(imageFile) : '') && (
-        <div className="result-section">
-          <div className="image-result">
-            <img
-              src={imageUrl}
-              alt="Edited image"
-              className="result-image"
-              onClick={() => {
-                const link = document.createElement('a');
-                link.href = imageUrl;
-                link.target = '_blank';
-                link.rel = 'noopener noreferrer';
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-              }}
-            />
-            <div
-              className="image-overlay"
-              onClick={() => {
-                const link = document.createElement('a');
-                link.href = imageUrl;
-                link.target = '_blank';
-                link.rel = 'noopener noreferrer';
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-              }}
-              style={{ cursor: 'pointer' }}
-            >
-              <span>Click to view full size</span>
-            </div>
-          </div>
+       {hasEdited && imageUrl && (
+         <div className="result-section">
+           <div className="image-result">
+             <img
+               src={imageUrl}
+               alt="Edited image"
+               className="result-image"
+               onClick={() => {
+                 const link = document.createElement('a');
+                 link.href = imageUrl;
+                 link.target = '_blank';
+                 link.rel = 'noopener noreferrer';
+                 document.body.appendChild(link);
+                 link.click();
+                 document.body.removeChild(link);
+               }}
+             />
+             <div
+               className="image-overlay"
+               onClick={() => {
+                 const link = document.createElement('a');
+                 link.href = imageUrl;
+                 link.target = '_blank';
+                 link.rel = 'noopener noreferrer';
+                 document.body.appendChild(link);
+                 link.click();
+                 document.body.removeChild(link);
+               }}
+               style={{ cursor: 'pointer' }}
+             >
+               <span>Click to view full size</span>
+             </div>
+           </div>
 
-          <div className="result-actions">
-            <a
-              href={imageUrl}
-              download="edited-image.png"
-              className="result-btn"
-            >
-              <svg className="btn-icon" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
-              </svg>
-              Download Image
-            </a>
-            <button
-              className="result-btn"
-              onClick={() => navigator.clipboard.writeText(imageUrl)}
-              style={{ background: 'var(--secondary-gradient)' }}
-            >
-              <svg className="btn-icon" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
-              </svg>
-              Copy URL
-            </button>
-          </div>
-        </div>
-      )}
+           <div className="result-actions">
+             <a
+               href={imageUrl}
+               download="edited-image.png"
+               className="result-btn"
+             >
+               <svg className="btn-icon" viewBox="0 0 24 24" fill="currentColor">
+                 <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+               </svg>
+               Download Image
+             </a>
+             <button
+               className="result-btn"
+               onClick={() => navigator.clipboard.writeText(imageUrl)}
+               style={{ background: 'var(--secondary-gradient)' }}
+             >
+               <svg className="btn-icon" viewBox="0 0 24 24" fill="currentColor">
+                 <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
+               </svg>
+               Copy URL
+             </button>
+           </div>
+         </div>
+       )}
     </div>
   );
 };
