@@ -209,33 +209,17 @@ export const ImageEdit = () => {
        {hasEdited && imageUrl && (
          <div className="result-section">
            <div className="image-result">
-             <img
-               src={imageUrl}
-               alt="Edited image"
-               className="result-image"
-               onClick={() => {
-                 const link = document.createElement('a');
-                 link.href = imageUrl;
-                 link.target = '_blank';
-                 link.rel = 'noopener noreferrer';
-                 document.body.appendChild(link);
-                 link.click();
-                 document.body.removeChild(link);
-               }}
-             />
-             <div
-               className="image-overlay"
-               onClick={() => {
-                 const link = document.createElement('a');
-                 link.href = imageUrl;
-                 link.target = '_blank';
-                 link.rel = 'noopener noreferrer';
-                 document.body.appendChild(link);
-                 link.click();
-                 document.body.removeChild(link);
-               }}
-               style={{ cursor: 'pointer' }}
-             >
+              <img
+                src={imageUrl}
+                alt="Edited image"
+                className="result-image"
+                onClick={() => window.open(imageUrl, '_blank', 'noopener,noreferrer')}
+              />
+              <div
+                className="image-overlay"
+                onClick={() => window.open(imageUrl, '_blank', 'noopener,noreferrer')}
+                style={{ cursor: 'pointer' }}
+              >
                <span>Click to view full size</span>
              </div>
            </div>
