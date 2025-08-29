@@ -244,7 +244,19 @@ export const MultiImageComposition = () => {
                 document.body.removeChild(link);
               }}
             />
-            <div className="image-overlay">
+            <div
+              className="image-overlay"
+              onClick={() => {
+                const link = document.createElement('a');
+                link.href = imageUrls[3]!;
+                link.target = '_blank';
+                link.rel = 'noopener noreferrer';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+              }}
+              style={{ cursor: 'pointer' }}
+            >
               <span>Click to view full size</span>
             </div>
           </div>
