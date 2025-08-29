@@ -79,10 +79,13 @@ export const ImageEdit = () => {
                 onDrop={(e) => {
                   e.preventDefault();
                   e.currentTarget.classList.remove('drag-over');
-                  const file = e.dataTransfer.files[0];
-                  if (file && file.type.startsWith('image/')) {
-                    handleFileChange({ target: { files: [file] } } as any);
-                  }
+                   const file = e.dataTransfer.files[0];
+                   if (file && file.type.startsWith('image/')) {
+                     const mockEvent = {
+                       target: { files: [file] }
+                     } as unknown as React.ChangeEvent<HTMLInputElement>;
+                     handleFileChange(mockEvent);
+                   }
                 }}
               >
                 <svg className="file-input-icon" viewBox="0 0 24 24" fill="currentColor">
