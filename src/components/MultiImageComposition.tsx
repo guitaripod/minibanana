@@ -56,6 +56,14 @@ export const MultiImageComposition = () => {
     }
   };
 
+  const handleNewTask = () => {
+    setPrompt('');
+    setImageFiles([null, null, null]);
+    setImageUrls([null, null, null, null]);
+    setError(null);
+    setLoading(false);
+  };
+
   const validFilesCount = imageFiles.filter(file => file !== null).length;
 
   if (!hasApiKey()) {
@@ -170,7 +178,7 @@ export const MultiImageComposition = () => {
               onChange={(e) => setPrompt(e.target.value)}
               placeholder="Combine the elements from these images into a new scene, place the product on the model, create a collage..."
               rows={4}
-              disabled={loading || validFilesCount < 2}
+              disabled={loading}
               aria-describedby="composition-help"
             />
             <small id="composition-help" style={{ color: 'var(--text-muted)', fontSize: '0.875rem', marginTop: '0.25rem', display: 'block' }}>
@@ -191,6 +199,18 @@ export const MultiImageComposition = () => {
               )}
               {loading ? 'Composing...' : 'Compose Images'}
             </button>
+            {imageUrls[3] && (
+              <button
+                className="btn-secondary"
+                onClick={handleNewTask}
+                disabled={loading}
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/>
+                </svg>
+                New Task
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -214,7 +234,15 @@ export const MultiImageComposition = () => {
               src={imageUrls[3]!}
               alt="Composed image"
               className="result-image"
-              onClick={() => window.open(imageUrls[3]!, '_blank')}
+              onClick={() => {
+                const link = document.createElement('a');
+                link.href = imageUrls[3]!;
+                link.target = '_blank';
+                link.rel = 'noopener noreferrer';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+              }}
             />
             <div className="image-overlay">
               <span>Click to view full size</span>
