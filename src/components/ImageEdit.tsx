@@ -72,76 +72,78 @@ export const ImageEdit = () => {
         <div className="input-group">
           <div className="form-field">
             <label htmlFor="image-upload">Upload Image</label>
-            {!imageFile || (imageUrl && imageFile && imageUrl === URL.createObjectURL(imageFile)) ? (
-              <div
-                className="file-input-container"
-                onClick={() => fileInputRef.current?.click()}
-                onDragOver={(e) => {
-                  e.preventDefault();
-                  e.currentTarget.classList.add('drag-over');
-                }}
-                onDragLeave={(e) => {
-                  e.preventDefault();
-                  e.currentTarget.classList.remove('drag-over');
-                }}
-                onDrop={(e) => {
-                  e.preventDefault();
-                  e.currentTarget.classList.remove('drag-over');
-                   const file = e.dataTransfer.files[0];
-                   if (file && file.type.startsWith('image/')) {
-                     const mockEvent = {
-                       target: { files: [file] }
-                     } as unknown as React.ChangeEvent<HTMLInputElement>;
-                     handleFileChange(mockEvent);
-                   }
-                }}
-              >
-                <svg className="file-input-icon" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
-                </svg>
-                <div className="file-input-text">Drop your image here or click to browse</div>
-                <div className="file-input-subtext">Supports PNG, JPG, JPEG, WebP (max 10MB)</div>
-                <input
-                  type="file"
-                  ref={fileInputRef}
-                  onChange={handleFileChange}
-                  accept="image/*"
-                  disabled={loading}
-                  className="file-input-hidden"
-                  id="image-upload"
-                />
-              </div>
-            ) : (
-              <div className="image-result">
-                <img
-                  src={imageUrl!}
-                  alt="Uploaded image"
-                  className="result-image"
-                  style={{ maxHeight: '300px' }}
-                />
-                <button
-                  className="result-btn"
-                  onClick={() => {
-                    setImageFile(null);
-                    setImageUrl(null);
-                    setPrompt('');
+            {!imageUrl || imageUrl === (imageFile ? URL.createObjectURL(imageFile) : '') ? (
+              !imageFile ? (
+                <div
+                  className="file-input-container"
+                  onClick={() => fileInputRef.current?.click()}
+                  onDragOver={(e) => {
+                    e.preventDefault();
+                    e.currentTarget.classList.add('drag-over');
                   }}
-                  style={{
-                    position: 'absolute',
-                    top: '1rem',
-                    right: '1rem',
-                    background: 'rgba(0,0,0,0.7)',
-                    padding: '0.5rem',
-                    width: 'auto',
-                    minWidth: 'auto'
+                  onDragLeave={(e) => {
+                    e.preventDefault();
+                    e.currentTarget.classList.remove('drag-over');
+                  }}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    e.currentTarget.classList.remove('drag-over');
+                     const file = e.dataTransfer.files[0];
+                     if (file && file.type.startsWith('image/')) {
+                       const mockEvent = {
+                         target: { files: [file] }
+                       } as unknown as React.ChangeEvent<HTMLInputElement>;
+                       handleFileChange(mockEvent);
+                     }
                   }}
                 >
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z"/>
+                  <svg className="file-input-icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
                   </svg>
-                </button>
-              </div>
-            )}
+                  <div className="file-input-text">Drop your image here or click to browse</div>
+                  <div className="file-input-subtext">Supports PNG, JPG, JPEG, WebP (max 10MB)</div>
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleFileChange}
+                    accept="image/*"
+                    disabled={loading}
+                    className="file-input-hidden"
+                    id="image-upload"
+                  />
+                </div>
+              ) : (
+                <div className="image-result">
+                  <img
+                    src={imageUrl!}
+                    alt="Uploaded image"
+                    className="result-image"
+                    style={{ maxHeight: '300px' }}
+                  />
+                  <button
+                    className="result-btn"
+                    onClick={() => {
+                      setImageFile(null);
+                      setImageUrl(null);
+                      setPrompt('');
+                    }}
+                    style={{
+                      position: 'absolute',
+                      top: '1rem',
+                      right: '1rem',
+                      background: 'rgba(0,0,0,0.7)',
+                      padding: '0.5rem',
+                      width: 'auto',
+                      minWidth: 'auto'
+                    }}
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z"/>
+                    </svg>
+                  </button>
+                </div>
+              )
+            ) : null}
           </div>
 
           <div className="form-field">
