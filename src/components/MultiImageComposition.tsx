@@ -100,44 +100,41 @@ export const MultiImageComposition = () => {
             <div className="multi-image-grid">
               {[0, 1, 2].map((index) => (
                 <div key={index} className="image-upload-slot">
-                  {!imageUrls[index] ? (
-                    <div
-                      className="file-input-container"
-                      onClick={() => fileInputRefs.current[index]?.click()}
-                      onDragOver={(e) => {
-                        e.preventDefault();
-                        e.currentTarget.classList.add('drag-over');
-                      }}
-                      onDragLeave={(e) => {
-                        e.preventDefault();
-                        e.currentTarget.classList.remove('drag-over');
-                      }}
-                      onDrop={(e) => {
-                        e.preventDefault();
-                        e.currentTarget.classList.remove('drag-over');
-                        const file = e.dataTransfer.files[0];
-                        if (file && file.type.startsWith('image/')) {
-                          const mockEvent = {
-                            target: { files: [file] }
-                          } as unknown as React.ChangeEvent<HTMLInputElement>;
-                          handleFileChange(index)(mockEvent);
-                        }
-                      }}
-                    >
-                      <svg className="file-input-icon" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
-                      </svg>
-                      <div className="file-input-text">Image {index + 1}</div>
-                      <div className="file-input-subtext">Drop or click</div>
-                      <input
-                        type="file"
-                        ref={(el) => { fileInputRefs.current[index] = el; }}
-                        onChange={handleFileChange(index)}
-                        accept="image/*"
-                        disabled={loading}
-                        className="file-input-hidden"
-                      />
-                    </div>
+                   {!imageUrls[index] ? (
+                     <div className="file-input-container">
+                       <svg className="file-input-icon" viewBox="0 0 24 24" fill="currentColor">
+                         <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
+                       </svg>
+                       <div className="file-input-text">Image {index + 1}</div>
+                       <div className="file-input-subtext">Drop or click</div>
+                       <input
+                         type="file"
+                         ref={(el) => { fileInputRefs.current[index] = el; }}
+                         onChange={handleFileChange(index)}
+                         accept="image/*"
+                         disabled={loading}
+                         className="file-input-hidden"
+                         onDragOver={(e) => {
+                           e.preventDefault();
+                           e.currentTarget.parentElement?.classList.add('drag-over');
+                         }}
+                         onDragLeave={(e) => {
+                           e.preventDefault();
+                           e.currentTarget.parentElement?.classList.remove('drag-over');
+                         }}
+                         onDrop={(e) => {
+                           e.preventDefault();
+                           e.currentTarget.parentElement?.classList.remove('drag-over');
+                           const file = e.dataTransfer.files[0];
+                           if (file && file.type.startsWith('image/')) {
+                             const mockEvent = {
+                               target: { files: [file] }
+                             } as unknown as React.ChangeEvent<HTMLInputElement>;
+                             handleFileChange(index)(mockEvent);
+                           }
+                         }}
+                       />
+                     </div>
                   ) : (
                     <div className="image-result">
                       <img

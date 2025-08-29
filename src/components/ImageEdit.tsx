@@ -77,29 +77,7 @@ export const ImageEdit = () => {
           <div className="form-field">
             <label htmlFor="image-upload">Upload Image</label>
             {!imageFile ? (
-              <div
-                className="file-input-container"
-                onClick={() => fileInputRef.current?.click()}
-                onDragOver={(e) => {
-                  e.preventDefault();
-                  e.currentTarget.classList.add('drag-over');
-                }}
-                onDragLeave={(e) => {
-                  e.preventDefault();
-                  e.currentTarget.classList.remove('drag-over');
-                }}
-                onDrop={(e) => {
-                  e.preventDefault();
-                  e.currentTarget.classList.remove('drag-over');
-                   const file = e.dataTransfer.files[0];
-                   if (file && file.type.startsWith('image/')) {
-                     const mockEvent = {
-                       target: { files: [file] }
-                     } as unknown as React.ChangeEvent<HTMLInputElement>;
-                     handleFileChange(mockEvent);
-                   }
-                }}
-              >
+              <div className="file-input-container">
                 <svg className="file-input-icon" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
                 </svg>
@@ -113,6 +91,25 @@ export const ImageEdit = () => {
                   disabled={loading}
                   className="file-input-hidden"
                   id="image-upload"
+                  onDragOver={(e) => {
+                    e.preventDefault();
+                    e.currentTarget.parentElement?.classList.add('drag-over');
+                  }}
+                  onDragLeave={(e) => {
+                    e.preventDefault();
+                    e.currentTarget.parentElement?.classList.remove('drag-over');
+                  }}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    e.currentTarget.parentElement?.classList.remove('drag-over');
+                     const file = e.dataTransfer.files[0];
+                     if (file && file.type.startsWith('image/')) {
+                       const mockEvent = {
+                         target: { files: [file] }
+                       } as unknown as React.ChangeEvent<HTMLInputElement>;
+                       handleFileChange(mockEvent);
+                     }
+                  }}
                 />
               </div>
             ) : (
