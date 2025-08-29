@@ -161,6 +161,74 @@ export const generateImageFromTextAndImage = async (
   return `data:image/png;base64,${imageData}`;
 };
 
+export const generateImageFromTextAndMultipleImages = async (
+  prompt: string,
+  imageFiles: File[]
+): Promise<string> => {
+  const parts: Array<{ text: string } | { inline_data: { mime_type: string; data: string } }> = [{ text: prompt }];
+
+  for (const file of imageFiles) {
+    const base64 = await fileToBase64(file);
+    parts.push({
+      inline_data: {
+        mime_type: file.type,
+        data: base64,
+      }
+    });
+  }
+
+  const request: GenerateImageRequest = {
+    contents: [{
+      parts
+    }]
+  };
+
+  const apiKey = getApiKey();
+
+  const response = await fetch(BASE_URL, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-goog-api-key': apiKey,
+    },
+    body: JSON.stringify(request),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    console.error('API Error Response:', errorText);
+    throw new Error(`API request failed: ${response.status} ${response.statusText}`);
+  }
+
+  const data = await response.json();
+  console.log('API Response:', data);
+
+  let imageData = null;
+
+  if (data.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data) {
+    imageData = data.candidates[0].content.parts[0].inlineData.data;
+  }
+  else if (data.candidates?.[0]?.content?.parts?.[1]?.inlineData?.data) {
+    imageData = data.candidates[0].content.parts[1].inlineData.data;
+  }
+  else if (data.candidates?.[0]?.content?.parts?.[0]?.inline_data?.data) {
+    imageData = data.candidates[0].content.parts[0].inline_data.data;
+  }
+  else if (data.candidates?.[0]?.content?.parts?.[0]?.data) {
+    imageData = data.candidates[0].content.parts[0].data;
+  }
+  else if (data.data) {
+    imageData = data.data;
+  }
+
+  if (!imageData) {
+    console.error('Response structure:', JSON.stringify(data, null, 2));
+    throw new Error('No image data in response. Check console for response details.');
+  }
+
+  return `data:image/png;base64,${imageData}`;
+};
+
 const fileToBase64 = (file: File): Promise<string> => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
