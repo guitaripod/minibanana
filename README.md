@@ -12,7 +12,7 @@ Create beautiful images from your imagination using natural language description
 ### Smart Image Editing
 Upload any image and transform it with AI-powered editing instructions.
 
-### NEW: Multi-Image Composition
+### Multi-Image Composition
 Combine 2-3 images into stunning compositions! Perfect for:
 - Creating collages and montages
 - Product photography with models
@@ -94,9 +94,3 @@ Built with modern web standards, optimized performance, and comprehensive error 
 - Mobile - Works perfectly on any device
 - Private - Your images stay on your device
 - Free - Powered by Google's free tier API
-
----
-
-Ready to turn your ideas into images? Start creating with MiniBanana today!
-
-Built with love using Google's Gemini AI
