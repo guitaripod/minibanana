@@ -93,8 +93,10 @@ export const TextToImage = () => {
               disabled={loading || !prompt.trim()}
               aria-describedby="generate-help"
             >
-               {!loading && <StarIcon />}
-              {loading ? 'Creating magic...' : 'Generate Image'}
+              {!loading && <StarIcon />}
+              <span className="btn-content">
+                {loading ? 'Creating magic...' : 'Generate Image'}
+              </span>
             </button>
             {imageUrl && (
               <button

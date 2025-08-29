@@ -119,7 +119,9 @@ export const ApiKeyModal = ({ onClose }: ApiKeyModalProps) => {
                 disabled={!apiKey.trim() || isSubmitting}
                 className={`btn-primary ${isSubmitting ? 'btn-loading' : ''}`}
               >
-                {isSubmitting ? 'Saving...' : 'Save API Key'}
+                <span className="btn-content">
+                  {isSubmitting ? 'Saving...' : 'Save API Key'}
+                </span>
               </button>
             </div>
           </form>
