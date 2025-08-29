@@ -1,103 +1,102 @@
-# Gemini Image Generator
+# 🎨 MiniBanana - AI Image Generator
 
-A React TypeScript web application for generating and editing images using Google's Gemini 2.5 Flash Image Preview model.
+**Transform your ideas into stunning visuals with Google's most advanced AI image generation technology.**
 
-## Features
+MiniBanana is a sleek, modern web app that harnesses the power of Google's Gemini 2.5 Flash Image Preview model to create, edit, and compose images with just text descriptions.
 
-- **Text-to-Image Generation**: Create images from text descriptions
-- **Image Editing**: Upload an image and edit it with text prompts
-- **System Theme**: Automatically follows your system's dark/light mode preference
-- **Responsive Design**: Works seamlessly on desktop and mobile devices
-- **Production Ready**: Built with TypeScript, proper error handling, and modern React practices
+## ✨ Features
 
-## Tech Stack
+### 🚀 **Text-to-Image Generation**
+Create beautiful images from your imagination using natural language descriptions.
 
-- React 19
-- TypeScript
-- Vite
-- Gemini 2.5 Flash Image Preview API
+### 🎯 **Smart Image Editing**
+Upload any image and transform it with AI-powered editing instructions.
 
-## Setup
+### 🆕 **NEW: Multi-Image Composition**
+Combine 2-3 images into stunning compositions! Perfect for:
+- Creating collages and montages
+- Product photography with models
+- Scene composition and storytelling
+- Artistic mashups and blends
 
-1. Clone the repository
-2. Install dependencies:
-    ```bash
-    npm install
-    ```
-3. **Option 1: Environment Variable**
-   Create a `.env` file with your Gemini API key:
-    ```
-    VITE_GEMINI_API_KEY=your_api_key_here
-    ```
+### 📱 **Mobile-First Design**
+Seamlessly works on all devices with touch-optimized interfaces and responsive layouts.
 
-4. **Option 2: Runtime Configuration**
-   Start the app and use the API key modal to enter your key at runtime
+### 🌙 **Smart Theming**
+Automatically adapts to your system's dark/light mode preferences.
 
-5. Start the development server:
-    ```bash
-    npm run dev
-    ```
-6. Open http://localhost:5173 in your browser
+## 🎯 Quick Start
 
-## Development
+1. **Get your free Gemini API key** from [Google AI Studio](https://aistudio.google.com/app/apikey)
+2. **Clone and install:**
+   ```bash
+   git clone <repository-url>
+   cd minibanana
+   npm install
+   ```
+3. **Configure your API key** (choose one option):
+   - Add to `.env`: `VITE_GEMINI_API_KEY=your_key_here`
+   - Or enter it in the app's API key modal
+4. **Start creating:**
+   ```bash
+   npm run dev
+   ```
+
+## 🎨 How to Use
+
+### Text to Image
+1. Click "Text to Image"
+2. Describe your vision: *"A serene mountain lake at sunset with vibrant colors"*
+3. Click "Generate" and watch AI bring your words to life!
+
+### Image Editing
+1. Click "Image Editing"
+2. Upload your photo
+3. Add instructions: *"Make it look like a watercolor painting"*
+4. Get your transformed image instantly!
+
+### 🆕 Multi-Image Composition
+1. Click "Multi-Image Composition"
+2. Upload 2-3 images
+3. Describe how to combine them: *"Place the product on the model in a studio setting"*
+4. Create professional compositions in seconds!
+
+## 🛠️ Tech Stack
+
+- **React 19** - Latest React with modern hooks and patterns
+- **TypeScript** - Type-safe development
+- **Vite** - Lightning-fast build tool
+- **Gemini 2.5 Flash** - Google's most advanced multimodal AI
+
+## 🔒 Privacy & Security
+
+- **Client-side processing** - Your images never leave your device
+- **Secure API handling** - Keys stored locally, never transmitted
+- **No data collection** - We don't store or track your usage
+- **Direct API calls** - Straight from your browser to Google's secure servers
+
+## 📦 Production Ready
 
 ```bash
-# Start development server
-npm run dev
-
-# Type checking
-npm run type-check
-
-# Linting
-npm run lint
-```
-
-## Build for Production
-
-```bash
-# Clean previous build
-npm run clean
-
-# Build for production
+# Build for deployment
 npm run build
 
 # Preview production build
 npm run preview
 ```
 
-The built files will be in the `dist` directory.
+Built with modern web standards, optimized performance, and comprehensive error handling.
 
-## Usage
+## 🎉 Why MiniBanana?
 
-### System Theme
-The app automatically adapts to your system's dark/light mode preference and updates in real-time when you change your system settings.
+- **⚡ Fast** - Generate images in seconds
+- **🎨 Creative** - Endless possibilities with AI
+- **📱 Mobile** - Works perfectly on any device
+- **🔒 Private** - Your images stay on your device
+- **🆓 Free** - Powered by Google's free tier API
 
-### Text to Image
-1. Select the "Text to Image" tab
-2. Enter a descriptive prompt
-3. Click "Generate Image"
-4. Download the generated image
+---
 
-### Image Editing
-1. Select the "Image Editing" tab
-2. Upload an image file
-3. Enter editing instructions
-4. Click "Edit Image"
-5. Download the edited image
+**Ready to turn your ideas into images?** Start creating with MiniBanana today! 🍌✨
 
-## API Reference
-
-The app uses the Gemini 2.5 Flash Image Preview API:
-- Endpoint: `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image-preview:generateContent`
-- Supports text-to-image and image editing with text prompts
-
-## Security Notes
-
-- API key can be stored in environment variables or browser localStorage
-- Images are processed client-side only
-- No user data is transmitted to or stored on external servers
-- All image generation happens through direct API calls from the browser
-
-## License
-
-MIT
+*Built with ❤️ using Google's Gemini AI*
