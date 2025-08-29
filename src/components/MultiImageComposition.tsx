@@ -1,5 +1,10 @@
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { generateImageFromTextAndMultipleImages, hasApiKey } from '../services/geminiApi';
+import { ApiKeyErrorMessage } from './ApiKeyErrorMessage';
+import { ErrorMessage } from './ErrorMessage';
+import { FileUpload } from './FileUpload';
+import { openImage } from '../utils/imageUtils';
+import { CloseIcon } from './icons';
 
 export const MultiImageComposition = () => {
   const [prompt, setPrompt] = useState('');
@@ -7,18 +12,14 @@ export const MultiImageComposition = () => {
   const [imageUrls, setImageUrls] = useState<(string | null)[]>([null, null, null]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const fileInputRefs = useRef<(HTMLInputElement | null)[]>([null, null, null]);
 
-  const handleFileChange = (index: number) => (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const newFiles = [...imageFiles];
-      const newUrls = [...imageUrls];
-      newFiles[index] = file;
-      newUrls[index] = URL.createObjectURL(file);
-      setImageFiles(newFiles);
-      setImageUrls(newUrls);
-    }
+  const handleFileChange = (index: number) => (file: File) => {
+    const newFiles = [...imageFiles];
+    const newUrls = [...imageUrls];
+    newFiles[index] = file;
+    newUrls[index] = URL.createObjectURL(file);
+    setImageFiles(newFiles);
+    setImageUrls(newUrls);
   };
 
   const handleRemoveImage = (index: number) => {
@@ -37,13 +38,32 @@ export const MultiImageComposition = () => {
 
   const handleGenerate = async () => {
     const validFiles = imageFiles.filter(file => file !== null) as File[];
-    if (!prompt.trim() || validFiles.length < 2) return;
+
+    if (validFiles.length < 2) {
+      setError('Please select at least 2 images to combine.');
+      return;
+    }
+
+    if (!prompt.trim()) {
+      setError('Please enter composition instructions for combining the images.');
+      return;
+    }
+
+    if (prompt.trim().length < 3) {
+      setError('Please provide more detailed composition instructions (at least 3 characters).');
+      return;
+    }
+
+    if (prompt.trim().length > 1000) {
+      setError('Composition instructions are too long. Please keep them under 1000 characters.');
+      return;
+    }
 
     setLoading(true);
     setError(null);
 
     try {
-      const url = await generateImageFromTextAndMultipleImages(prompt, validFiles);
+      const url = await generateImageFromTextAndMultipleImages(prompt.trim(), validFiles);
       setImageUrls(prev => {
         const newUrls = [...prev];
         newUrls[3] = url;
@@ -73,15 +93,7 @@ export const MultiImageComposition = () => {
           <h2 className="section-title">Multi-Image Composition</h2>
           <p className="section-description">Combine multiple images into one composition</p>
         </div>
-        <div className="status-message status-error">
-          <svg className="status-icon" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-          </svg>
-          <div>
-            <strong>API Key Required</strong>
-            <p>Please set up your Gemini API key to use this feature. Get your free API key from <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" className="guide-link">Google AI Studio</a></p>
-          </div>
-        </div>
+        <ApiKeyErrorMessage />
       </div>
     );
   }
@@ -100,42 +112,14 @@ export const MultiImageComposition = () => {
             <div className="multi-image-grid">
               {[0, 1, 2].map((index) => (
                 <div key={index} className="image-upload-slot">
-                   {!imageUrls[index] ? (
-                     <div className="file-input-container">
-                       <svg className="file-input-icon" viewBox="0 0 24 24" fill="currentColor">
-                         <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
-                       </svg>
-                       <div className="file-input-text">Image {index + 1}</div>
-                       <div className="file-input-subtext">Drop or click</div>
-                       <input
-                         type="file"
-                         ref={(el) => { fileInputRefs.current[index] = el; }}
-                         onChange={handleFileChange(index)}
-                         accept="image/*"
-                         disabled={loading}
-                         className="file-input-hidden"
-                         onDragOver={(e) => {
-                           e.preventDefault();
-                           e.currentTarget.parentElement?.classList.add('drag-over');
-                         }}
-                         onDragLeave={(e) => {
-                           e.preventDefault();
-                           e.currentTarget.parentElement?.classList.remove('drag-over');
-                         }}
-                         onDrop={(e) => {
-                           e.preventDefault();
-                           e.currentTarget.parentElement?.classList.remove('drag-over');
-                           const file = e.dataTransfer.files[0];
-                           if (file && file.type.startsWith('image/')) {
-                             const mockEvent = {
-                               target: { files: [file] }
-                             } as unknown as React.ChangeEvent<HTMLInputElement>;
-                             handleFileChange(index)(mockEvent);
-                           }
-                         }}
-                       />
-                     </div>
-                  ) : (
+                    {!imageUrls[index] ? (
+                      <FileUpload
+                        onFileSelect={handleFileChange(index)}
+                        disabled={loading}
+                        text={`Image ${index + 1}`}
+                        subtext="Drop or click"
+                      />
+                   ) : (
                     <div className="image-result">
                       <img
                         src={imageUrls[index]!}
@@ -156,9 +140,7 @@ export const MultiImageComposition = () => {
                           minWidth: 'auto'
                         }}
                       >
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                          <path d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z"/>
-                        </svg>
+                         <CloseIcon size={14} />
                       </button>
                     </div>
                   )}
@@ -212,17 +194,12 @@ export const MultiImageComposition = () => {
         </div>
       </div>
 
-      {error && (
-        <div className="status-message status-error">
-          <svg className="status-icon" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-          </svg>
-          <div>
-            <strong>Composition Failed</strong>
-            <p>{error}</p>
-          </div>
-        </div>
-      )}
+       {error && (
+         <ErrorMessage
+           title="Composition Failed"
+           message={error}
+         />
+       )}
 
       {imageUrls[3] && (
         <div className="result-section">
@@ -231,27 +208,11 @@ export const MultiImageComposition = () => {
               src={imageUrls[3]!}
               alt="Composed image"
               className="result-image"
-              onClick={() => {
-                const link = document.createElement('a');
-                link.href = imageUrls[3]!;
-                link.target = '_blank';
-                link.rel = 'noopener noreferrer';
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-              }}
+              onClick={() => openImage(imageUrls[3]!)}
             />
             <div
               className="image-overlay"
-              onClick={() => {
-                const link = document.createElement('a');
-                link.href = imageUrls[3]!;
-                link.target = '_blank';
-                link.rel = 'noopener noreferrer';
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-              }}
+              onClick={() => openImage(imageUrls[3]!)}
               style={{ cursor: 'pointer' }}
             >
               <span>Click to view full size</span>

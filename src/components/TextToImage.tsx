@@ -1,5 +1,9 @@
 import { useState } from 'react';
 import { generateImageFromText, hasApiKey } from '../services/geminiApi';
+import { ApiKeyErrorMessage } from './ApiKeyErrorMessage';
+import { ErrorMessage } from './ErrorMessage';
+import { openImage } from '../utils/imageUtils';
+import { StarIcon, PlusIcon, DownloadIcon, CopyIcon } from './icons';
 
 export const TextToImage = () => {
   const [prompt, setPrompt] = useState('');
@@ -8,14 +12,28 @@ export const TextToImage = () => {
   const [error, setError] = useState<string | null>(null);
 
   const handleGenerate = async () => {
-    if (!prompt.trim()) return;
+    if (!prompt.trim()) {
+      setError('Please enter a description for the image you want to generate.');
+      return;
+    }
+
+    // Basic validation for prompt length
+    if (prompt.trim().length < 3) {
+      setError('Please provide a more detailed description (at least 3 characters).');
+      return;
+    }
+
+    if (prompt.trim().length > 1000) {
+      setError('Description is too long. Please keep it under 1000 characters.');
+      return;
+    }
 
     setLoading(true);
     setError(null);
     setImageUrl(null);
 
     try {
-      const url = await generateImageFromText(prompt);
+      const url = await generateImageFromText(prompt.trim());
       setImageUrl(url);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to generate image');
@@ -38,15 +56,7 @@ export const TextToImage = () => {
           <h2 className="section-title">Text to Image</h2>
           <p className="section-description">Transform your ideas into stunning visuals</p>
         </div>
-        <div className="status-message status-error">
-          <svg className="status-icon" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-          </svg>
-          <div>
-            <strong>API Key Required</strong>
-            <p>Please set up your Gemini API key to use this feature. Get your free API key from <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" className="guide-link">Google AI Studio</a></p>
-          </div>
-        </div>
+        <ApiKeyErrorMessage />
       </div>
     );
   }
@@ -83,11 +93,7 @@ export const TextToImage = () => {
               disabled={loading || !prompt.trim()}
               aria-describedby="generate-help"
             >
-              {!loading && (
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                </svg>
-              )}
+               {!loading && <StarIcon />}
               {loading ? 'Creating magic...' : 'Generate Image'}
             </button>
             {imageUrl && (
@@ -96,9 +102,7 @@ export const TextToImage = () => {
                 onClick={handleNewTask}
                 disabled={loading}
               >
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/>
-                </svg>
+                 <PlusIcon />
                 New Task
               </button>
             )}
@@ -106,17 +110,12 @@ export const TextToImage = () => {
         </div>
       </div>
 
-      {error && (
-        <div className="status-message status-error">
-          <svg className="status-icon" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-          </svg>
-          <div>
-            <strong>Generation Failed</strong>
-            <p>{error}</p>
-          </div>
-        </div>
-      )}
+       {error && (
+         <ErrorMessage
+           title="Generation Failed"
+           message={error}
+         />
+       )}
 
       {imageUrl && (
         <div className="result-section">
@@ -125,27 +124,11 @@ export const TextToImage = () => {
               src={imageUrl}
               alt="Generated image"
               className="result-image"
-              onClick={() => {
-                const link = document.createElement('a');
-                link.href = imageUrl;
-                link.target = '_blank';
-                link.rel = 'noopener noreferrer';
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-              }}
+              onClick={() => openImage(imageUrl)}
             />
             <div
               className="image-overlay"
-              onClick={() => {
-                const link = document.createElement('a');
-                link.href = imageUrl;
-                link.target = '_blank';
-                link.rel = 'noopener noreferrer';
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-              }}
+              onClick={() => openImage(imageUrl)}
               style={{ cursor: 'pointer' }}
             >
               <span>Click to view full size</span>
@@ -158,9 +141,7 @@ export const TextToImage = () => {
               download="generated-image.png"
               className="result-btn"
             >
-              <svg className="btn-icon" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
-              </svg>
+               <DownloadIcon />
               Download Image
             </a>
             <button
@@ -168,9 +149,7 @@ export const TextToImage = () => {
               onClick={() => navigator.clipboard.writeText(imageUrl)}
               style={{ background: 'var(--secondary-gradient)' }}
             >
-              <svg className="btn-icon" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
-              </svg>
+               <CopyIcon />
               Copy URL
             </button>
           </div>

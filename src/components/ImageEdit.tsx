@@ -1,5 +1,10 @@
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { generateImageFromTextAndImage, hasApiKey } from '../services/geminiApi';
+import { ApiKeyErrorMessage } from './ApiKeyErrorMessage';
+import { ErrorMessage } from './ErrorMessage';
+import { FileUpload } from './FileUpload';
+import { openImage } from '../utils/imageUtils';
+import { CloseIcon } from './icons';
 
 export const ImageEdit = () => {
   const [prompt, setPrompt] = useState('');
@@ -8,25 +13,39 @@ export const ImageEdit = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [hasEdited, setHasEdited] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setImageFile(file);
-      setImageUrl(URL.createObjectURL(file));
-      setHasEdited(false);
-    }
+  const handleFileChange = (file: File) => {
+    setImageFile(file);
+    setImageUrl(URL.createObjectURL(file));
+    setHasEdited(false);
   };
 
   const handleGenerate = async () => {
-    if (!prompt.trim() || !imageFile) return;
+    if (!imageFile) {
+      setError('Please select an image to edit first.');
+      return;
+    }
+
+    if (!prompt.trim()) {
+      setError('Please enter editing instructions for the image.');
+      return;
+    }
+
+    if (prompt.trim().length < 3) {
+      setError('Please provide more detailed editing instructions (at least 3 characters).');
+      return;
+    }
+
+    if (prompt.trim().length > 1000) {
+      setError('Editing instructions are too long. Please keep them under 1000 characters.');
+      return;
+    }
 
     setLoading(true);
     setError(null);
 
     try {
-      const url = await generateImageFromTextAndImage(prompt, imageFile);
+      const url = await generateImageFromTextAndImage(prompt.trim(), imageFile);
       setImageUrl(url);
       setHasEdited(true);
     } catch (err) {
@@ -52,15 +71,7 @@ export const ImageEdit = () => {
           <h2 className="section-title">Image Editing</h2>
           <p className="section-description">Transform existing images with AI-powered editing</p>
         </div>
-        <div className="status-message status-error">
-          <svg className="status-icon" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-          </svg>
-          <div>
-            <strong>API Key Required</strong>
-            <p>Please set up your Gemini API key to use this feature. Get your free API key from <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" className="guide-link">Google AI Studio</a></p>
-          </div>
-        </div>
+        <ApiKeyErrorMessage />
       </div>
     );
   }
@@ -77,41 +88,10 @@ export const ImageEdit = () => {
           <div className="form-field">
             <label htmlFor="image-upload">Upload Image</label>
             {!imageFile ? (
-              <div className="file-input-container">
-                <svg className="file-input-icon" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
-                </svg>
-                <div className="file-input-text">Drop your image here or click to browse</div>
-                <div className="file-input-subtext">Supports PNG, JPG, JPEG, WebP (max 10MB)</div>
-                <input
-                  type="file"
-                  ref={fileInputRef}
-                  onChange={handleFileChange}
-                  accept="image/*"
-                  disabled={loading}
-                  className="file-input-hidden"
-                  id="image-upload"
-                  onDragOver={(e) => {
-                    e.preventDefault();
-                    e.currentTarget.parentElement?.classList.add('drag-over');
-                  }}
-                  onDragLeave={(e) => {
-                    e.preventDefault();
-                    e.currentTarget.parentElement?.classList.remove('drag-over');
-                  }}
-                  onDrop={(e) => {
-                    e.preventDefault();
-                    e.currentTarget.parentElement?.classList.remove('drag-over');
-                     const file = e.dataTransfer.files[0];
-                     if (file && file.type.startsWith('image/')) {
-                       const mockEvent = {
-                         target: { files: [file] }
-                       } as unknown as React.ChangeEvent<HTMLInputElement>;
-                       handleFileChange(mockEvent);
-                     }
-                  }}
-                />
-              </div>
+              <FileUpload
+                onFileSelect={handleFileChange}
+                disabled={loading}
+              />
             ) : (
               <div className="image-result">
                 <img
@@ -138,9 +118,7 @@ export const ImageEdit = () => {
                     minWidth: 'auto'
                   }}
                 >
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z"/>
-                  </svg>
+                   <CloseIcon size={14} />
                 </button>
               </div>
             )}
@@ -191,70 +169,29 @@ export const ImageEdit = () => {
         </div>
       </div>
 
-      {error && (
-        <div className="status-message status-error">
-          <svg className="status-icon" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-          </svg>
-          <div>
-            <strong>Editing Failed</strong>
-            <p>{error}</p>
-          </div>
-        </div>
-      )}
+       {error && (
+         <ErrorMessage
+           title="Editing Failed"
+           message={error}
+         />
+       )}
 
        {hasEdited && imageUrl && (
          <div className="result-section">
            <div className="image-result">
-              <img
-                src={imageUrl}
-                alt="Edited image"
-                className="result-image"
-                onClick={() => {
-                  if (imageUrl.startsWith('data:')) {
-                    // Convert base64 data URL to blob URL for better browser compatibility
-                    const byteString = atob(imageUrl.split(',')[1]);
-                    const mimeString = imageUrl.split(',')[0].split(':')[1].split(';')[0];
-                    const ab = new ArrayBuffer(byteString.length);
-                    const ia = new Uint8Array(ab);
-                    for (let i = 0; i < byteString.length; i++) {
-                      ia[i] = byteString.charCodeAt(i);
-                    }
-                    const blob = new Blob([ab], { type: mimeString });
-                    const blobUrl = URL.createObjectURL(blob);
-                    window.open(blobUrl, '_blank', 'noopener,noreferrer');
-                    // Clean up the blob URL after a delay
-                    setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
-                  } else {
-                    window.open(imageUrl, '_blank', 'noopener,noreferrer');
-                  }
-                }}
-              />
+               <img
+                 src={imageUrl}
+                 alt="Edited image"
+                 className="result-image"
+                 onClick={() => openImage(imageUrl)}
+               />
               <div
                 className="image-overlay"
-                onClick={() => {
-                  if (imageUrl.startsWith('data:')) {
-                    // Convert base64 data URL to blob URL for better browser compatibility
-                    const byteString = atob(imageUrl.split(',')[1]);
-                    const mimeString = imageUrl.split(',')[0].split(':')[1].split(';')[0];
-                    const ab = new ArrayBuffer(byteString.length);
-                    const ia = new Uint8Array(ab);
-                    for (let i = 0; i < byteString.length; i++) {
-                      ia[i] = byteString.charCodeAt(i);
-                    }
-                    const blob = new Blob([ab], { type: mimeString });
-                    const blobUrl = URL.createObjectURL(blob);
-                    window.open(blobUrl, '_blank', 'noopener,noreferrer');
-                    // Clean up the blob URL after a delay
-                    setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
-                  } else {
-                    window.open(imageUrl, '_blank', 'noopener,noreferrer');
-                  }
-                }}
+                onClick={() => openImage(imageUrl)}
                 style={{ cursor: 'pointer' }}
               >
                <span>Click to view full size</span>
-             </div>
+              </div>
            </div>
 
            <div className="result-actions">
