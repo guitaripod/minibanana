@@ -1,5 +1,4 @@
 export const extractImageData = (data: any): string => {
-  // Check if we have a valid response structure
   if (!data || !data.candidates || !Array.isArray(data.candidates) || data.candidates.length === 0) {
     console.error('Invalid response structure:', data);
     throw new Error('Invalid response from the API. Please try again.');
@@ -7,7 +6,6 @@ export const extractImageData = (data: any): string => {
 
   const candidate = data.candidates[0];
 
-  // Check finish reason for blocked content
   if (candidate.finishReason) {
     switch (candidate.finishReason) {
       case 'PROHIBITED_CONTENT':
@@ -19,19 +17,16 @@ export const extractImageData = (data: any): string => {
       case 'OTHER':
         throw new Error('This request could not be processed by Google\'s AI. Please try again with a different prompt or image.');
       case 'STOP':
-        // This is normal completion, continue processing
         break;
       default:
         console.warn('Unknown finish reason:', candidate.finishReason);
     }
   }
 
-  // Look for image data in the response
   let imageData = null;
   let hasTextResponse = false;
   let textResponse = '';
 
-  // Loop through all parts to find the image data and check for text
   if (candidate.content?.parts && Array.isArray(candidate.content.parts)) {
     for (const part of candidate.content.parts) {
       if (part.inlineData?.data) {
@@ -47,16 +42,13 @@ export const extractImageData = (data: any): string => {
     }
   }
 
-  // Fallback to top-level data if not found in parts
   if (!imageData && data.data) {
     imageData = data.data;
   }
 
-  // If no image found, check if there's text and throw appropriate error
   if (!imageData && hasTextResponse) {
     console.error('AI returned text instead of image:', textResponse);
 
-    // Provide helpful error messages based on the text content
     if (textResponse.toLowerCase().includes('color') || textResponse.toLowerCase().includes('what color')) {
       throw new Error('Please specify the colors and details you want in your image. The AI needs more specific information.');
     } else if (textResponse.toLowerCase().includes('describe') || textResponse.toLowerCase().includes('clarify')) {
