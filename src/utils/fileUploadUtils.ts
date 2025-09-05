@@ -11,6 +11,19 @@ export const handleFileDrop = (
   }
 };
 
+export const handleMultipleFileDrop = (
+  e: React.DragEvent<HTMLDivElement>,
+  callback: (files: File[]) => void
+) => {
+  e.preventDefault();
+  e.currentTarget.parentElement?.classList.remove('drag-over');
+
+  const files = Array.from(e.dataTransfer.files).filter(file => file.type.startsWith('image/'));
+  if (files.length > 0) {
+    callback(files);
+  }
+};
+
 export const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
   e.preventDefault();
   e.currentTarget.parentElement?.classList.add('drag-over');

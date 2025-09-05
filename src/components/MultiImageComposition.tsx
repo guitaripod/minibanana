@@ -2,22 +2,20 @@ import { useState } from 'react';
 import { generateImageFromTextAndMultipleImages, hasApiKey } from '../services/geminiApi';
 import { ApiKeyErrorMessage } from './ApiKeyErrorMessage';
 import { ErrorMessage } from './ErrorMessage';
-import { FileUpload } from './FileUpload';
 import { openImage } from '../utils/imageUtils';
 import { CloseIcon } from './icons';
+import { handleMultipleFileDrop, handleDragOver, handleDragLeave } from '../utils/fileUploadUtils';
 
 export const MultiImageComposition = () => {
   const [prompt, setPrompt] = useState('');
-  const [imageFiles, setImageFiles] = useState<(File | null)[]>([null, null, null]);
-  const [imageUrls, setImageUrls] = useState<(string | null)[]>([null, null, null]);
+  const [imageFiles, setImageFiles] = useState<File[]>([]);
+  const [imageUrls, setImageUrls] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleFileChange = (index: number) => (file: File) => {
-    const newFiles = [...imageFiles];
-    const newUrls = [...imageUrls];
-    newFiles[index] = file;
-    newUrls[index] = URL.createObjectURL(file);
+  const handleAddImages = (files: File[]) => {
+    const newFiles = [...imageFiles, ...files];
+    const newUrls = [...imageUrls, ...files.map(file => URL.createObjectURL(file))];
     setImageFiles(newFiles);
     setImageUrls(newUrls);
   };
@@ -26,10 +24,10 @@ export const MultiImageComposition = () => {
     const newFiles = [...imageFiles];
     const newUrls = [...imageUrls];
     if (newUrls[index]) {
-      URL.revokeObjectURL(newUrls[index]!);
+      URL.revokeObjectURL(newUrls[index]);
     }
-    newFiles[index] = null;
-    newUrls[index] = null;
+    newFiles.splice(index, 1);
+    newUrls.splice(index, 1);
     setImageFiles(newFiles);
     setImageUrls(newUrls);
   };
@@ -37,9 +35,7 @@ export const MultiImageComposition = () => {
 
 
   const handleGenerate = async () => {
-    const validFiles = imageFiles.filter(file => file !== null) as File[];
-
-    if (validFiles.length < 2) {
+    if (imageFiles.length < 2) {
       setError('Please select at least 2 images to combine.');
       return;
     }
@@ -63,12 +59,8 @@ export const MultiImageComposition = () => {
     setError(null);
 
     try {
-      const url = await generateImageFromTextAndMultipleImages(prompt.trim(), validFiles);
-      setImageUrls(prev => {
-        const newUrls = [...prev];
-        newUrls[3] = url;
-        return newUrls;
-      });
+      const url = await generateImageFromTextAndMultipleImages(prompt.trim(), imageFiles);
+      setImageUrls(prev => [...prev, url]);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to compose images');
     } finally {
@@ -78,13 +70,14 @@ export const MultiImageComposition = () => {
 
   const handleNewTask = () => {
     setPrompt('');
-    setImageFiles([null, null, null]);
-    setImageUrls([null, null, null, null]);
+    imageUrls.forEach(url => URL.revokeObjectURL(url));
+    setImageFiles([]);
+    setImageUrls([]);
     setError(null);
     setLoading(false);
   };
 
-  const validFilesCount = imageFiles.filter(file => file !== null).length;
+
 
   if (!hasApiKey()) {
     return (
@@ -107,47 +100,59 @@ export const MultiImageComposition = () => {
 
       <div className="input-section">
         <div className="input-group">
-          <div className="form-field">
-            <label>Upload Images (2-3 required)</label>
-            <div className="multi-image-grid">
-              {[0, 1, 2].map((index) => (
-                <div key={index} className="image-upload-slot">
-                    {!imageUrls[index] ? (
-                      <FileUpload
-                        onFileSelect={handleFileChange(index)}
-                        disabled={loading}
-                        text={`Image ${index + 1}`}
-                        subtext="Drop or click"
-                      />
-                   ) : (
-                    <div className="image-result">
-                      <img
-                        src={imageUrls[index]!}
-                        alt={`Uploaded image ${index + 1}`}
-                        className="result-image"
-                        style={{ maxHeight: '200px' }}
-                      />
-                      <button
-                        className="result-btn"
-                        onClick={() => handleRemoveImage(index)}
-                        style={{
-                          position: 'absolute',
-                          top: '0.5rem',
-                          right: '0.5rem',
-                          background: 'rgba(0,0,0,0.7)',
-                          padding: '0.25rem',
-                          width: 'auto',
-                          minWidth: 'auto'
-                        }}
-                      >
-                         <CloseIcon size={14} />
-                      </button>
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
+           <div className="form-field">
+             <label>Upload Images (2+ required)</label>
+             <div
+               className="multi-image-drop-zone"
+               onDragOver={handleDragOver}
+               onDragLeave={handleDragLeave}
+               onDrop={(e) => handleMultipleFileDrop(e, handleAddImages)}
+             >
+               <div className="drop-zone-content">
+                 <svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor" opacity="0.5">
+                   <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
+                 </svg>
+                 <div className="drop-zone-text">
+                   Drop multiple images here or click to browse
+                 </div>
+                 <div className="drop-zone-subtext">
+                   Supports PNG, JPG, JPEG, WebP (max 10MB each)
+                 </div>
+                 <input
+                   type="file"
+                   multiple
+                   accept="image/*"
+                   onChange={(e) => {
+                     const files = Array.from(e.target.files || []);
+                     handleAddImages(files);
+                     e.target.value = '';
+                   }}
+                   disabled={loading}
+                   className="file-input-hidden"
+                 />
+               </div>
+             </div>
+             {imageUrls.length > 0 && (
+               <div className="uploaded-images-grid">
+                 {imageUrls.map((url, index) => (
+                   <div key={index} className="uploaded-image-item">
+                     <img
+                       src={url}
+                       alt={`Uploaded image ${index + 1}`}
+                       className="uploaded-image"
+                     />
+                     <button
+                       className="remove-image-btn"
+                       onClick={() => handleRemoveImage(index)}
+                       title="Remove image"
+                     >
+                       <CloseIcon size={16} />
+                     </button>
+                   </div>
+                 ))}
+               </div>
+             )}
+           </div>
 
           <div className="form-field">
             <label htmlFor="composition-prompt">Composition Instructions</label>
@@ -169,7 +174,7 @@ export const MultiImageComposition = () => {
             <button
               className={`btn-primary ${loading ? 'btn-loading' : ''}`}
               onClick={handleGenerate}
-              disabled={loading || !prompt.trim() || validFilesCount < 2}
+              disabled={loading || !prompt.trim() || imageFiles.length < 2}
             >
               {!loading && (
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
@@ -180,7 +185,7 @@ export const MultiImageComposition = () => {
                 {loading ? 'Composing...' : 'Compose Images'}
               </span>
             </button>
-            {imageUrls[3] && (
+            {imageUrls.length > imageFiles.length && (
               <button
                 className="btn-secondary"
                 onClick={handleNewTask}
@@ -203,48 +208,48 @@ export const MultiImageComposition = () => {
          />
        )}
 
-      {imageUrls[3] && (
-        <div className="result-section">
-          <div className="image-result">
-            <img
-              src={imageUrls[3]!}
-              alt="Composed image"
-              className="result-image"
-              onClick={() => openImage(imageUrls[3]!)}
-            />
-            <div
-              className="image-overlay"
-              onClick={() => openImage(imageUrls[3]!)}
-              style={{ cursor: 'pointer' }}
-            >
-              <span>Click to view full size</span>
-            </div>
-          </div>
+       {imageUrls.length > imageFiles.length && (
+         <div className="result-section">
+           <div className="image-result">
+             <img
+               src={imageUrls[imageUrls.length - 1]}
+               alt="Composed image"
+               className="result-image"
+               onClick={() => openImage(imageUrls[imageUrls.length - 1])}
+             />
+             <div
+               className="image-overlay"
+               onClick={() => openImage(imageUrls[imageUrls.length - 1])}
+               style={{ cursor: 'pointer' }}
+             >
+               <span>Click to view full size</span>
+             </div>
+           </div>
 
-          <div className="result-actions">
-            <a
-              href={imageUrls[3]!}
-              download="composed-image.png"
-              className="result-btn"
-            >
-              <svg className="btn-icon" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
-              </svg>
-              Download Image
-            </a>
-            <button
-              className="result-btn"
-              onClick={() => navigator.clipboard.writeText(imageUrls[3]!)}
-              style={{ background: 'var(--secondary-gradient)' }}
-            >
-              <svg className="btn-icon" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
-              </svg>
-              Copy URL
-            </button>
-          </div>
-        </div>
-      )}
+           <div className="result-actions">
+             <a
+               href={imageUrls[imageUrls.length - 1]}
+               download="composed-image.png"
+               className="result-btn"
+             >
+               <svg className="btn-icon" viewBox="0 0 24 24" fill="currentColor">
+                 <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+               </svg>
+               Download Image
+             </a>
+             <button
+               className="result-btn"
+               onClick={() => navigator.clipboard.writeText(imageUrls[imageUrls.length - 1])}
+               style={{ background: 'var(--secondary-gradient)' }}
+             >
+               <svg className="btn-icon" viewBox="0 0 24 24" fill="currentColor">
+                 <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
+               </svg>
+               Copy URL
+             </button>
+           </div>
+         </div>
+       )}
     </div>
   );
 };
