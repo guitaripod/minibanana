@@ -26,9 +26,34 @@ export const extractImageData = (data: any): string => {
     }
   }
 
-  // Check if the response contains text instead of an image
-  if (candidate.content?.parts?.[0]?.text) {
-    const textResponse = candidate.content.parts[0].text;
+  // Look for image data in the response
+  let imageData = null;
+  let hasTextResponse = false;
+  let textResponse = '';
+
+  // Loop through all parts to find the image data and check for text
+  if (candidate.content?.parts && Array.isArray(candidate.content.parts)) {
+    for (const part of candidate.content.parts) {
+      if (part.inlineData?.data) {
+        imageData = part.inlineData.data;
+      } else if (part.inline_data?.data) {
+        imageData = part.inline_data.data;
+      } else if (part.data) {
+        imageData = part.data;
+      } else if (part.text) {
+        hasTextResponse = true;
+        textResponse = part.text;
+      }
+    }
+  }
+
+  // Fallback to top-level data if not found in parts
+  if (!imageData && data.data) {
+    imageData = data.data;
+  }
+
+  // If no image found, check if there's text and throw appropriate error
+  if (!imageData && hasTextResponse) {
     console.error('AI returned text instead of image:', textResponse);
 
     // Provide helpful error messages based on the text content
@@ -41,25 +66,6 @@ export const extractImageData = (data: any): string => {
     } else {
       throw new Error(`The AI responded with: "${textResponse}". Please try rephrasing your prompt with more specific details.`);
     }
-  }
-
-  // Look for image data in the response
-  let imageData = null;
-
-  if (candidate.content?.parts?.[0]?.inlineData?.data) {
-    imageData = candidate.content.parts[0].inlineData.data;
-  }
-  else if (candidate.content?.parts?.[1]?.inlineData?.data) {
-    imageData = candidate.content.parts[1].inlineData.data;
-  }
-  else if (candidate.content?.parts?.[0]?.inline_data?.data) {
-    imageData = candidate.content.parts[0].inline_data.data;
-  }
-  else if (candidate.content?.parts?.[0]?.data) {
-    imageData = candidate.content.parts[0].data;
-  }
-  else if (data.data) {
-    imageData = data.data;
   }
 
   if (!imageData) {
