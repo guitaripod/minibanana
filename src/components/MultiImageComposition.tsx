@@ -3,7 +3,6 @@ import { generateImageFromTextAndMultipleImages, hasApiKey } from '../services/g
 import { ApiKeyErrorMessage } from './ApiKeyErrorMessage';
 import { ErrorMessage } from './ErrorMessage';
 import { openImage } from '../utils/imageUtils';
-import { CloseIcon } from './icons';
 import { handleMultipleFileDrop, handleDragOver, handleDragLeave } from '../utils/fileUploadUtils';
 
 export const MultiImageComposition = () => {
@@ -146,7 +145,7 @@ export const MultiImageComposition = () => {
                        onClick={() => handleRemoveImage(index)}
                        title="Remove image"
                      >
-                       <CloseIcon size={16} />
+                       ×
                      </button>
                    </div>
                  ))}
