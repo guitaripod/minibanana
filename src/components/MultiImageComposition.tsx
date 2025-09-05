@@ -13,10 +13,20 @@ export const MultiImageComposition = () => {
   const [error, setError] = useState<string | null>(null);
 
   const handleAddImages = (files: File[]) => {
-    const newFiles = [...imageFiles, ...files];
-    const newUrls = [...imageUrls, ...files.map(file => URL.createObjectURL(file))];
-    setImageFiles(newFiles);
-    setImageUrls(newUrls);
+    const remainingSlots = 3 - imageFiles.length;
+    const filesToAdd = files.slice(0, remainingSlots);
+
+    if (filesToAdd.length > 0) {
+      const newFiles = [...imageFiles, ...filesToAdd];
+      const newUrls = [...imageUrls, ...filesToAdd.map(file => URL.createObjectURL(file))];
+      setImageFiles(newFiles);
+      setImageUrls(newUrls);
+    }
+
+    if (files.length > remainingSlots) {
+      setError(`Only ${remainingSlots} more image${remainingSlots === 1 ? '' : 's'} can be added. The API supports a maximum of 3 images.`);
+      setTimeout(() => setError(null), 5000); // Clear error after 5 seconds
+    }
   };
 
   const handleRemoveImage = (index: number) => {
@@ -35,7 +45,12 @@ export const MultiImageComposition = () => {
 
   const handleGenerate = async () => {
     if (imageFiles.length < 2) {
-      setError('Please select at least 2 images to combine.');
+      setError('Please select at least 2 images to combine (maximum 3 supported).');
+      return;
+    }
+
+    if (imageFiles.length > 3) {
+      setError('Too many images selected. Please select a maximum of 3 images.');
       return;
     }
 
@@ -100,37 +115,43 @@ export const MultiImageComposition = () => {
       <div className="input-section">
         <div className="input-group">
            <div className="form-field">
-             <label>Upload Images (2+ required)</label>
+             <label>Upload Images ({imageFiles.length}/3 - 2+ required)</label>
              <div
-               className="multi-image-drop-zone"
-               onDragOver={handleDragOver}
-               onDragLeave={handleDragLeave}
-               onDrop={(e) => handleMultipleFileDrop(e, handleAddImages)}
+               className={`multi-image-drop-zone ${imageFiles.length >= 3 ? 'disabled' : ''}`}
+               onDragOver={imageFiles.length >= 3 ? undefined : handleDragOver}
+               onDragLeave={imageFiles.length >= 3 ? undefined : handleDragLeave}
+               onDrop={imageFiles.length >= 3 ? undefined : (e) => handleMultipleFileDrop(e, handleAddImages)}
              >
-               <div className="drop-zone-content">
-                 <svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor" opacity="0.5">
-                   <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
-                 </svg>
-                 <div className="drop-zone-text">
-                   Drop multiple images here or click to browse
-                 </div>
-                 <div className="drop-zone-subtext">
-                   Supports PNG, JPG, JPEG, WebP (max 10MB each)
-                 </div>
-                 <input
-                   type="file"
-                   multiple
-                   accept="image/*"
-                   onChange={(e) => {
-                     const files = Array.from(e.target.files || []);
-                     handleAddImages(files);
-                     e.target.value = '';
-                   }}
-                   disabled={loading}
-                   className="file-input-hidden"
-                 />
-               </div>
-             </div>
+                <div className="drop-zone-content">
+                  <svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor" opacity={imageFiles.length >= 3 ? "0.3" : "0.5"}>
+                    <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
+                  </svg>
+                  <div className="drop-zone-text">
+                    {imageFiles.length >= 3
+                      ? "Maximum of 3 images reached"
+                      : "Drop multiple images here or click to browse"
+                    }
+                  </div>
+                  <div className="drop-zone-subtext">
+                    {imageFiles.length >= 3
+                      ? "Remove an image to add a different one"
+                      : "Supports PNG, JPG, JPEG, WebP (max 10MB each)"
+                    }
+                  </div>
+                  <input
+                    type="file"
+                    multiple
+                    accept="image/*"
+                    onChange={(e) => {
+                      const files = Array.from(e.target.files || []);
+                      handleAddImages(files);
+                      e.target.value = '';
+                    }}
+                    disabled={loading || imageFiles.length >= 3}
+                    className="file-input-hidden"
+                   />
+                </div>
+              </div>
              {imageUrls.length > 0 && (
                <div className="uploaded-images-grid">
                  {imageUrls.map((url, index) => (

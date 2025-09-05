@@ -535,6 +535,17 @@ body {
   background: var(--primary-light);
 }
 
+.multi-image-drop-zone.disabled {
+  border-color: var(--border-color);
+  background: var(--bg-secondary);
+  cursor: not-allowed;
+}
+
+.multi-image-drop-zone.disabled:hover {
+  border-color: var(--border-color);
+  background: var(--bg-secondary);
+}
+
 .drop-zone-content {
   display: flex;
   flex-direction: column;
